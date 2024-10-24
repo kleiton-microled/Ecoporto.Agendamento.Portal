@@ -16,6 +16,7 @@ using Ecoporto.Agendamento.Portal.Domain.Interfaces.Services;
 using Ecoporto.Agendamento.Portal.Domain.Extensions;
 using Ecoporto.Agendamento.Portal.Models;
 using Ecoporto.Agendamento.Portal.Application.Interfaces;
+using System.Globalization;
 
 
 namespace Ecoporto.Agendamento.Portal.Controllers
@@ -101,7 +102,7 @@ namespace Ecoporto.Agendamento.Portal.Controllers
                 {
 
 
-                    var motoristaComCNH = _motoristaAppService.ObterMotoristaPorCNH(viewModel.CNH,Convert.ToInt32( User.ObterTransportadoraID()));
+                    var motoristaComCNH = _motoristaAppService.ObterMotoristaPorCNH(viewModel.CNH, Convert.ToInt32(User.ObterTransportadoraID()));
 
                     if (motoristaComCNH != null)
                         return RetornarErro($"Já existe um outro motorista cadastrado com a CNH {viewModel.CNH}");
@@ -117,16 +118,16 @@ namespace Ecoporto.Agendamento.Portal.Controllers
                     {
                         return RetornarErro($"CPF inválido");
 
-                      
+
                     }
 
-                    if(Convert.ToDateTime(viewModel.ValidadeCNH) <= DateTime.Now.AddDays(-30))
+                    if (Convert.ToDateTime(viewModel.ValidadeCNH) <= DateTime.Now.AddDays(-30))
                         return RetornarErro($" A Validade da CNH deverá ser no mínimo 30 dias inferior à data atual");
 
                     if (Convert.ToDateTime(viewModel.ValidadeCNH) >= DateTime.Now.AddYears(10))
                         return RetornarErro($" A Validade da CNH deverá ser no máximo 10 anos");
 
-                
+
 
 
                 }
@@ -144,7 +145,7 @@ namespace Ecoporto.Agendamento.Portal.Controllers
 
                     }
 
-                 
+
 
                     if (viewModel.Bigrama == "")
                     {
@@ -218,7 +219,9 @@ namespace Ecoporto.Agendamento.Portal.Controllers
                 Id = motoristaBusca.Id,
                 Nome = motoristaBusca.Nome,
                 CNH = motoristaBusca.CNH,
-                ValidadeCNH = motoristaBusca.ValidadeCNH,
+                ValidadeCNH = !string.IsNullOrEmpty(motoristaBusca.ValidadeCNH)
+        ? DateTime.ParseExact(motoristaBusca.ValidadeCNH, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture).ToString("dd/MM/yyyy")
+        : motoristaBusca.ValidadeCNH, // Se estiver nula ou vazia, mantém o valor original
                 RG = motoristaBusca.RG,
                 CPF = motoristaBusca.CPF,
                 Celular = motoristaBusca.Celular,
@@ -295,7 +298,7 @@ namespace Ecoporto.Agendamento.Portal.Controllers
                     ModelState.AddModelError(string.Empty, $"Data Emissão deve ser preenchida  !");
                     return View(viewModel);
                 }
-                if (Convert.ToDateTime(viewModel.Data_Emissao) > DateTime.Now)
+                if (Convert.ToDateTime(viewModel.Data_Emissao).Date > DateTime.Now.Date)
                 {
                     ModelState.AddModelError(string.Empty, $"Data inválida, emissão nao pode ser maior que hoje !");
                     return View(viewModel);
@@ -316,7 +319,7 @@ namespace Ecoporto.Agendamento.Portal.Controllers
                     return View(viewModel);
                 }
 
-           
+
 
                 var motoristaBusca = _motoristaAppService.ObterMotoristaPorId(id.Value);
 
@@ -349,18 +352,26 @@ namespace Ecoporto.Agendamento.Portal.Controllers
                     }
 
 
-                    if (Convert.ToDateTime(viewModel.ValidadeCNH) <= DateTime.Now.AddDays(-30))
-                    {
-                        ModelState.AddModelError(string.Empty, $" A Validade da CNH deverá ser no mínimo 30 dias inferior à data atual");
-                        return View(viewModel);
-                    }
-                    if (Convert.ToDateTime(viewModel.ValidadeCNH) <= DateTime.Now.AddDays(-30)) {
-                        ModelState.AddModelError(string.Empty, $" A Validade da CNH deverá ser no mínimo 30 dias inferior à data atual");
-                    return View(viewModel);
-                      }
+                    // Capturar a string da data no formato correto
+                    string validadeCNHStr = viewModel.ValidadeCNH.ToString();
 
-                if (Convert.ToDateTime(viewModel.ValidadeCNH) >= DateTime.Now.AddYears(10))
-                        return RetornarErro($" A Validade da CNH deverá ser no máximo 10 anos");
+                    //// Definir o formato esperado (por exemplo: "MM/dd/yyyy HH:mm:ss")
+                    //DateTime validadeCNH = DateTime.ParseExact(validadeCNHStr, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+
+                    //// Validar se a validade da CNH é menor que 30 dias a partir da data atual ou maior que 10 anos no futuro
+                    //if (validadeCNH.Date <= DateTime.Now.Date.AddDays(-30) || validadeCNH.Date >= DateTime.Now.Date.AddYears(10))
+                    //{
+                    //    if (validadeCNH.Date <= DateTime.Now.Date.AddDays(-30))
+                    //    {
+                    //        ModelState.AddModelError(string.Empty, "A Validade da CNH deverá ser no mínimo 30 dias inferior à data atual");
+                    //    }
+                    //    else if (validadeCNH.Date >= DateTime.Now.Date.AddYears(10))
+                    //    {
+                    //        ModelState.AddModelError(string.Empty, "A Validade da CNH deverá ser no máximo 10 anos superior à data atual");
+                    //    }
+
+                    //    return View(viewModel); // Retorna a view com os erros
+                    //}
 
                     var motoristaComCPF = _motoristaAppService.ObterMotoristaPorCPF(viewModel.CPF, Convert.ToInt32(User.ObterTransportadoraID()));
 
@@ -397,7 +408,7 @@ namespace Ecoporto.Agendamento.Portal.Controllers
                     }
 
                 }
-
+                viewModel.ValidadeCNH = Convert.ToDateTime(viewModel.ValidadeCNH).Date.ToString("dd/MM/yyyy");
                 motoristaBusca.Passaport = viewModel.Passaport;
                 motoristaBusca.DT_Passaport = viewModel.Dt_passaport;
                 motoristaBusca.Carteira_Habilitacao = viewModel.Carteira_Habilitacao;
@@ -409,7 +420,7 @@ namespace Ecoporto.Agendamento.Portal.Controllers
                 motoristaBusca.Nextel = viewModel.Nextel;
                 motoristaBusca.MOP = viewModel.MOP;
                 motoristaBusca.Celular = viewModel.Celular;
-           
+
                 motoristaBusca.Estrangeiro = 0;
                 if (viewModel.Chkestrangeiro == true)
                     motoristaBusca.Estrangeiro = 1;
@@ -425,7 +436,7 @@ namespace Ecoporto.Agendamento.Portal.Controllers
                 {
                     _motoristaAppService.Atualizar(motoristaBusca);
                     TempData["Sucesso"] = true;
-                     motoristaBusca = _motoristaAppService.ObterMotoristaPorId(id.Value);
+                    motoristaBusca = _motoristaAppService.ObterMotoristaPorId(id.Value);
 
 
                     viewModel.Nome = motoristaBusca.Nome;

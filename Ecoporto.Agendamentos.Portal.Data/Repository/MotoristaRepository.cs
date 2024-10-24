@@ -100,14 +100,9 @@ namespace Ecoporto.Agendamento.Portal.Data.Repository
                using (_db = new OracleConnection(Conexao))
                 {
              
-
-
-
                     StringBuilder sb = new StringBuilder();
 
                     sb.Clear();
-
-
 
                     sb.AppendLine("   UPDATE OPERADOR.TB_AG_MOTORISTAS");
                     sb.AppendLine("       SET ");
@@ -122,78 +117,14 @@ namespace Ecoporto.Agendamento.Portal.Data.Repository
                     sb.AppendLine("     dt_nascimento = '" + motorista.DT_NASCIMENTO + "',");
                     sb.AppendLine("    orgao_emissor  = '" + motorista.Orgao_Emissor + "',");
                     sb.AppendLine("     DATA_EMISSAO = '" + motorista.Data_Emissao + "',");
-                    //sb.AppendLine("           bigrama = " + motorista.Nome + ",");
-                    //sb.AppendLine("           genero = " + motorista.Nome + ",");
-                    //sb.AppendLine("           passaport = " + motorista.Nome + ",");
-                    //sb.AppendLine("           carteira_habilitacao = " + motorista.Nome + ",");
-                    //sb.AppendLine("           dt_passaport = " + motorista.Nome + ",");
-                    //sb.AppendLine("            estrangeiro =  " + motorista.Nome + ",");
-                    //sb.AppendLine("           DT_EMISSAO = " + motorista.Nome + ",");
-
-
+                   
                     sb.AppendLine("           DT_ULTIMA_ATUALIZACAO = SYSDATE");
                     sb.AppendLine("       WHERE ");
                     sb.AppendLine("           AUTONUM = " + motorista.Id + "");
 
                     var query =_db.Query(sb.ToString()).FirstOrDefault();
-
-                   //_db.Close();
-                   //_db.Dispose();
                 }
-                //   using (_db = new OracleConnection(Conexao))
-                //    {
-                //       _db.Dispose();
-
-                //        var parametros = new DynamicParameters();
-
-                //        parametros.Add(name: "Nome", value: motorista.Nome, direction: ParameterDirection.Input);
-                //        parametros.Add(name: "CNH", value: motorista.CNH, direction: ParameterDirection.Input);
-                //        parametros.Add(name: "ValidadeCNH", value: motorista.ValidadeCNH, direction: ParameterDirection.Input);
-                //        parametros.Add(name: "RG", value: motorista.RG, direction: ParameterDirection.Input);
-                //        parametros.Add(name: "CPF", value: motorista.CPF, direction: ParameterDirection.Input);
-                //        parametros.Add(name: "Celular", value: motorista.Celular, direction: ParameterDirection.Input);
-                //        parametros.Add(name: "Nextel", value: motorista.Nextel, direction: ParameterDirection.Input);
-                //        parametros.Add(name: "MOP", value: motorista.MOP, direction: ParameterDirection.Input);
-                //        //-----------------------------------------------------------------------------------------
-                //        parametros.Add(name: "DTNascimento", value: motorista.DT_NASCIMENTO, direction: ParameterDirection.Input);
-                //        parametros.Add(name: "Estrangeiro", value: motorista.Estrangeiro, direction: ParameterDirection.Input);
-                //        parametros.Add(name: "Bigrama", value: motorista.Bigrama, direction: ParameterDirection.Input);
-                //        parametros.Add(name: "CarteiraHabilitacao", value: motorista.Carteira_Habilitacao, direction: ParameterDirection.Input);
-                //        parametros.Add(name: "Passaport", value: motorista.Passaport, direction: ParameterDirection.Input);
-                //        parametros.Add(name: "DtPassaport", value: motorista.DT_Passaport, direction: ParameterDirection.Input);
-                //        parametros.Add(name: "Genero", value: motorista.Genero, direction: ParameterDirection.Input);
-                //        parametros.Add(name: "DTEMISSAO", value: motorista.Data_Emissao, direction: ParameterDirection.Input);
-                //        parametros.Add(name: "ORGAOEMISSOR", value: motorista.Orgao_Emissor, direction: ParameterDirection.Input);
-                //        //-----------------------------------------------------------------------------------------
-                //        parametros.Add(name: "Id", value: motorista.Id, direction: ParameterDirection.Input);
-
-                //       _db.Execute(@"
-                //            UPDATE OPERADOR.TB_AG_MOTORISTAS
-                //                SET 
-                //                    NOME = :Nome,
-                //                    CNH = :CNH,
-                //                    VALIDADE_CNH = :ValidadeCNH,
-                //                    RG = :RG,
-                //                    CPF = :CPF,
-                //                    CELULAR = :Celular,
-                //                    NEXTEL = :Nextel,
-                //                    NUMERO_MOP = :MOP,
-                //                    bigrama = :Bigrama ,
-                //                    genero = :Genero ,
-                //                    passaport = :Passaport ,
-                //                    carteira_habilitacao = :CarteiraHabilitacao ,
-                //                    dt_passaport = :DtPassaport ,
-                //                     estrangeiro =  :Estrangeiro ,
-                //                    DT_EMISSAO = :DTEMISSAO,
-                //                    ORGAO_EMISSOR = :ORGAOEMISSOR,
-                //                    dt_nascimento = :DTNascimento,
-                //                    DT_ULTIMA_ATUALIZACAO = SYSDATE
-                //                WHERE 
-                //                    AUTONUM = :Id", parametros);
-
-                //       _db.Close();
-                //       _db.Dispose();
-                // }
+                
             }
             catch (Exception ex)
             {
