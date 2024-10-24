@@ -1,0 +1,144 @@
+﻿
+@{
+    ViewBag.Title = "Home";
+}
+
+<section class="content-header mt-5">
+    <h1>
+        <i class="fa fa-calendar" aria-hidden="true"></i>
+        Agendamentos
+    </h1>
+    <ol class="breadcrumb">
+        <li>
+            <a href="@Url.Content("http://op.ecoportosantos.com.br/icc/Default.aspx?site=1")">
+                <i class="fa fa-home"></i>Home
+            </a>
+        </li>
+    </ol>
+</section>
+
+<div class="card">
+
+
+    <div class="card-body" style="min-height:300px;">
+
+        <div class="row padding-bottom-20">
+            <div class="col-lg-12">
+                <h4>
+                    <i class="fa fa-check"></i> Selecione o agendamento desejado.
+                </h4>
+            </div>
+        </div>        
+        <div class="row padding-bottom-20">
+            @{
+                foreach (var item in ViewBag.ListarSites)
+                {
+                        
+                    <div class="col-md-4 link" style="position:relative; left: 40px; top:10px; padding-bottom:30px;" data-id="@item.Id" data-link="@item.Link" data-descr="@item.Descricao">
+                        <button type="button" class="btn btn-outline-success  btn-square-md" data-mdb-ripple-color="dark" style="height: 120px; width:300px;">
+                            <span style="position:relative; top:15px;">
+                                @Html.Raw(item.Image)
+                            </span>
+                            @item.Descricao<br /><br />
+                            <span style="float:right">
+                                <i class="fa fa-sign-in-alt"></i>
+                                Acessar
+                            </span>
+                        </button>
+
+
+                    </div>
+                }
+
+            }            
+        </div>
+
+        
+    </div>
+    <div data-id="0" class="modal fade" tabindex="-1" role="dialog" id="modal-redirect-agendamentos">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fa fa-calendar"></i> Agendamento</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table width="100%">
+                        <tr>
+                            <td>
+                                <p id="messageRedirect">Aguarde enquanto você está sendo redirecionado para o portal de agendamentos</p>
+                                <p></p>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    @*<button type="button" class="btn btn-secondary" >Não</button>
+                    <button type="button" id="btnSim" class="btn btn-eco">Sim</button>*@
+                </div>
+            </div>
+        </div>
+    </div>
+    @section Css{
+        @Styles.Render("~/bundles/datatablesCSS")
+        <style>
+        @*@Styles.Render("~/bundles/JGalleryCSS")*@
+            #gridRegistros {
+                font-size: 12px;
+            }
+
+                #gridRegistros th {
+                    font-size: 11px;
+                }
+        </style>
+    }
+    @section scripts{
+        @Scripts.Render("~/bundles/JGallery")       
+        
+        <script>            
+            $('.link').click(function () {                
+                var link = $(this).attr('data-link');
+                var descricao = $(this).attr('data-descr'); 
+                
+                
+                $.ajax({
+                    url: '@Url.Content("/Home/GetOpenAgendamento")', 
+                    type: 'GET',
+                    data: { link: link, descricao: descricao }, 
+
+                    beforeSend: function () {
+                        $('#prealoader').show(); 
+                    },
+                    success: function (Dados) {
+                        $('#preloader').hide();
+                        var mensagem = Dados.Mensagem;
+                        var statusRetorno = Dados.statusRetorno; 
+                        var url = Dados.objetoRetorno.url; 
+
+                    //    $('#modal-redirect-agendamentos').modal('toggle'); 
+
+                        if (statusRetorno == "200") {
+                            $('#messageRedirect').empty();
+                            $('#messageRedirect').html(mensagem);                            
+                         
+                            setTimeout(function () {
+                                window.open(url, '_blank');
+                            }, 20)
+                            $('#modal-redirect-agendamentos').modal('hide');
+                         
+                        }
+                        else {
+                            toastr.error(mensagem, 'Agendamentos'); 
+                        }
+                    
+                    }
+                     
+                })
+        
+            });
+        </script>
+    }
+    
+       

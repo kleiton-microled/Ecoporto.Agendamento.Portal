@@ -1,0 +1,67 @@
+﻿<!DOCTYPE html>
+
+<html lang="en">
+<head runat="server">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Ecoporto Santos :: Agendamentos</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+    <link rel="icon" href="@Url.Content("~/Content/img/favicon.ico")" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+
+    @Styles.Render("~/bundles/css")
+    @RenderSection("Css", required: false)
+
+
+
+
+</head>
+
+
+<body>
+    <div id="preloader">
+        <div class="loader"></div>
+        <div id="txt-loading-page">Aguarde...</div>
+    </div>
+    @Html.Partial("_Menu")
+
+    @*<main role="main" class="container-fluid top-content">*@
+    <main role="main" class="@ViewBag.MainClass">
+        @RenderBody()
+    </main>
+
+    <footer class="footer">
+        <div class="container-fluid">
+            <div class="float-right">
+                Agendamentos
+            </div>
+            <span class="text-muted">
+                Copyright &copy; @DateTime.Now.Year
+                <a href="http://www.ecoportosantos.com.br">Ecoporto Santos</a>
+            </span>
+        </div>
+
+    </footer>
+
+
+
+    <script>
+        var urlBase = '@Url.Content("~")';
+    </script>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jquery-mask")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/toastr")
+    @Scripts.Render("~/bundles/site")
+    @Scripts.Render("~/bundles/moment")
+    @Scripts.Render("~/bundles/datatables")
+
+    @RenderSection("Scripts", required: false)
+
+    @RenderSection("Fotos", required: false)
+
+</body>
+
+</html>

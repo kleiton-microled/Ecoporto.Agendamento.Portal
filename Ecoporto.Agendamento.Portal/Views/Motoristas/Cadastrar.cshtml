@@ -1,0 +1,413 @@
+﻿@model Ecoporto.Agendamento.Portal.Models.ViewModels.MotoristaViewModel
+@using Ecoporto.Agendamento.Portal.Helpers
+
+@{
+    ViewBag.Title = "Cadastrar Motoristas";
+
+}
+
+
+
+
+<div class="row">
+
+    <div class="col-md-12">
+
+        <section class="content-header">
+            <h1>
+                Gerenciamento de Motoristas
+            </h1>
+            <ol class="breadcrumb">
+                <li>
+                    <a href="#">
+                        <i class="fa fa-home"></i>Home
+                    </a>
+                </li>
+                <li>
+                    <a href="#">Motoristas</a>
+                </li>
+                <li class="active">Cadastrar Motoristas Novo</li>
+            </ol>
+        </section>
+
+        @using (Ajax.BeginForm("Cadastrar", "Motoristas", null, new AjaxOptions
+        {
+            OnSuccess = "mensagemSucesso",
+            OnFailure = "mensagemErro",
+            HttpMethod = "POST"
+        }, new { id = "frmCadastroAgendamento" }))
+        {
+            <div class="card">
+                <div class="card-header">
+                    <i class="fa fa-edit fa-lg"></i>
+                    Detalhes do Motorista
+                    <div class="float-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+
+                                @Html.ValidarFormulario(ViewContext.ViewData.ModelState, false)
+
+                                <div id="pnlMotoristaChronos" class="alert alert-info alert-dismissible fade show invisivel" role="alert">
+                                    <strong>Motorista encontrado!</strong> Atualize somente os campos necessários
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+
+                                <div id="msgSucesso" class="invisivel alert alert-success" role="alert">
+                                    Motorista cadastrado com sucesso!
+                                </div>
+
+                                <div class="form-group">
+                                    <div id="msgErro" class="invisivel alert alert-danger" role="alert"></div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                         &nbsp;&nbsp;&nbsp; <input type="checkbox" id="chkestrangeiro" class="form-check-label" for="inlineCheckbox1">&nbsp;&nbsp;Estrangeiro
+
+                    </div>
+
+                    <div class="row" id="cnh">
+
+                        <div class="form-group col-md-2">
+
+                            @Html.LabelFor(model => model.CNH)
+                            @Html.EditorFor(model => model.CNH, new { htmlAttributes = new { @class = "form-control", maxlength = "15", autofocus = "autofocus" } })
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="btnPesquisarCNH">&nbsp;</label>
+                            <a id="btnPesquisarCNH" href="#" class="btn btn-outline-info btn-block btn-as-block" onclick="PesquisarCNH(this)"><i class="fas fa-search"></i>&nbsp;&nbsp;Pesquisar</a>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col-md-10">
+                            @Html.LabelFor(model => model.Nome)
+                            @Html.EditorFor(model => model.Nome, new { htmlAttributes = new { @class = "form-control", maxlength = "50", @readonly = "readonly" } })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label>
+
+                            &nbsp; &nbsp;&nbsp;&nbsp;    Gênero
+                        </label>
+                    </div>
+                    <div class="row">
+                        <div class="form-check form-check-inline">
+                            &nbsp;&nbsp;&nbsp;   &nbsp;&nbsp;&nbsp;       @Html.CheckBoxFor(model => Model.F, new { @class = "form-check-input" })
+                            <label class="form-check-label" for="inlineCheckbox1">F</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                          &nbsp;&nbsp;&nbsp;    &nbsp; &nbsp;&nbsp;&nbsp;      @Html.CheckBoxFor(model => Model.M, new { @class = "form-check-input" })
+                          <label class="form-check-label" for="inlineCheckbox1">M</label>
+                        </div>
+                            @Html.HiddenFor(Model => Model.Chkestrangeiro)
+                        </div>
+                    <div class="row">
+                        <div class="form-group col-md-3">
+                            @Html.LabelFor(model => model.DT_Nascimento)
+                            @Html.EditorFor(model => model.DT_Nascimento, new { htmlAttributes = new { @class = "form-control ", @readonly = "readonly" } })
+                        @Html.ValidationMessageFor(m => m.DT_Nascimento, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group col-md-2">
+                            @Html.LabelFor(model => model.ValidadeCNH)
+                            @Html.EditorFor(model => model.ValidadeCNH, new { htmlAttributes = new { @class = "form-control data", @readonly = "readonly" } })
+                        </div>
+                        <div class="form-group col-md-3" id="carteirahabilitacao">
+                                @Html.LabelFor(model => model.Carteira_Habilitacao)
+                                @Html.EditorFor(model => model.Carteira_Habilitacao, new { htmlAttributes = new { @class = "form-control  " } })
+
+                            </div>
+                        <div class="form-group col-md-2" id="rg">
+                            @Html.LabelFor(model => model.RG)
+                            @Html.EditorFor(model => model.RG, new { htmlAttributes = new { @class = "form-control", maxlength = "15", @readonly = "readonly" } })
+                        </div>
+                        <div class="col-sm-3" id="orgao">
+                            @Html.LabelFor(model => model.Orgao_Emissor)
+                            @Html.EditorFor(model => model.Orgao_Emissor, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                        @Html.ValidationMessageFor(m => m.Orgao_Emissor, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            @Html.LabelFor(model => model.Data_Emissao)
+                            @Html.EditorFor(model => model.Data_Emissao, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                    @Html.ValidationMessageFor(m => m.Data_Emissao, "", new { @class = "text-danger" })
+                    </div>
+                        <div class="col-sm-3" id="passaport">
+                            @Html.LabelFor(model => model.Passaport)
+                            @Html.EditorFor(model => model.Passaport, new { htmlAttributes = new { @class = "form-control" } })
+                        </div>
+                        <div class="col-sm-3" id="Dt_Passaport">
+                            @Html.LabelFor(model => model.Dt_passaport)
+                            @Html.EditorFor(model => model.Dt_passaport, new { htmlAttributes = new { @class = "form-control" } })
+                        </div>
+
+                        <div class="col-sm-3" id="paises">
+                            @Html.LabelFor(model => model.Bigrama)
+                            @Html.DropDownListFor(model => model.Bigrama, new MultiSelectList(Model.Paises, "bigrama", "descr"), string.Empty, new { @class = "form-control" })
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col-md-2" id="cpf">
+                            @Html.LabelFor(model => model.CPF)
+                            @Html.EditorFor(model => model.CPF, new { htmlAttributes = new { @class = "form-control cpf", maxlength = "14", @readonly = "readonly" } })
+                        </div>
+                        <div class="form-group col-md-2">
+                            @Html.LabelFor(model => model.Celular)
+                            @Html.EditorFor(model => model.Celular, new { htmlAttributes = new { @class = "form-control celular", maxlength = "15", @readonly = "readonly" } })
+                        </div>
+                        <div class="form-group col-md-2">
+                            @Html.LabelFor(model => model.Nextel)
+                            @Html.EditorFor(model => model.Nextel, new { htmlAttributes = new { @class = "form-control", maxlength = "20", @readonly = "readonly" } })
+                        </div>
+                        <div class="form-group col-md-2">
+                            @Html.LabelFor(model => model.MOP)
+                            @Html.EditorFor(model => model.MOP, new { htmlAttributes = new { @class = "form-control", maxlength = "15", @readonly = "readonly" } })
+                        </div>
+                        <div class="form-group col-md-4">
+                            @Html.LabelFor(model => model.UltimaAlteracao)
+                            @Html.EditorFor(model => model.UltimaAlteracao, new { htmlAttributes = new { @class = "form-control", @disabled = "disabled" } })
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="card-footer">
+
+                    <div class="row">
+                        <div class="form-group col-md-2">
+                            <a href="@Url.Action("Index", "Motoristas")" class="btn btn-secondary btn-block">Retornar</a>
+                        </div>
+                        <div class="form-group col-md-2 offset-md-8">
+                            <button id="btnSalvarMotorista" type="submit" class="btn btn-info btn-block">Salvar</button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        }
+    </div>
+
+</div>
+
+@section Scripts{
+
+    <script>
+
+        $(document).ready(function () {
+
+            $('main')
+                .addClass('container')
+                .removeClass('container-fluid');
+            $("#Chkestrangeiro").hide();
+
+        });
+
+        $('#Validade_CNH').mask('00/00/0000');
+        $('#Data_Emissao').mask('00/00/0000');
+        $('#DT_Nascimento').mask('00/00/0000');
+        $('#Dt_passaport').mask('00/00/0000');
+        $("#carteirahabilitacao").hide();
+        $("#Dt_Passaport").hide();
+        $('#passaport').hide();
+        $("#paises").hide();
+
+        function PesquisarCNH(target) {
+
+            event.preventDefault();
+
+            $('#' + target.id)
+                .html('<i class="fa fa-spinner fa-spin"></i> aguarde...')
+                .addClass('disabled');
+
+            $.get('@Url.Action("PesquisarCNH", "Motoristas")' + '?cnh=' + $('#CNH').val(), function (resultado) {
+
+                if (resultado) {
+
+                    $('#Nome').empty().val(resultado.Nome).prop('readonly', true);
+                    $('#RG').empty().val(resultado.RG).prop('readonly', false);
+                    $('#CPF').empty().val(resultado.CPF).prop('readonly', true);
+                    $('#DT_Nascimento').empty().val(resultado.DT_Nascimento).prop('readonly', false);
+                    $('#Orgao_Emissor').empty().val(resultado.Orgao_Emissor).prop('readonly', false);
+                    $('#Data_Emissao').empty().val(resultado.Data_Emissao).prop('readonly', false);
+
+
+
+                    $('#ValidadeCNH').empty().val(resultado.ValidadeCNH);
+                    $('#Celular').empty().val(resultado.Celular);
+
+                    $('#UltimaAlteracao').empty().val(resultado.UltimaAlteracao).prop('readonly', true);
+
+                    $('#msgErro')
+                        .html('').addClass('invisivel');
+
+                    $('#pnlMotoristaChronos').removeClass('invisivel');
+
+                } else {
+
+                    $('#Nome').empty().prop('readonly', false);
+                    $('#RG').empty().prop('readonly', false);
+                    $('#CPF').empty().prop('readonly', false);
+                    $('#DT_Nascimento').prop('readonly', false);
+                    $('#Orgao_Emissor').prop('readonly', false);
+                    $('#Data_Emissao').empty().prop('readonly', false);
+
+                    $('#pnlMotoristaChronos').addClass('invisivel');
+                }
+
+                $('#ValidadeCNH').prop('readonly', false);
+                $('#Celular').prop('readonly', false);
+                $('#Nextel').prop('readonly', false);
+                $('#MOP').prop('readonly', false);
+
+            }).fail(function (data) {
+                toastr.error(data.statusText, 'Motoristas');
+            }).always(function () {
+                $('#' + target.id)
+                    .html('<i class="fas fa-search"></i>  Pesquisar')
+                    .removeClass('disabled');
+            });
+        }
+
+        $('#btnSalvarMotorista').click(function () {
+
+            $(this)
+                .html('<i class="fa fa-spinner fa-spin"></i> aguarde...')
+                .addClass('disabled');
+
+            $('#msgErro')
+                .html('').addClass('invisivel');
+        });
+
+        var mensagemSucesso = function (xhr, status) {
+
+            $('#msgErro')
+                .html('').addClass('invisivel');
+
+            $('#pnlMotoristaChronos').addClass('invisivel');
+
+            $('#msgSucesso')
+                .removeClass('invisivel');
+
+            $('#btnSalvarMotorista')
+                .html('Salvar')
+                .removeClass('disabled');
+        };
+
+        var mensagemErro = function (xhr, status) {
+
+            $('#msgSucesso')
+                .addClass('invisivel');
+
+            $('#btnSalvarMotorista')
+                .html('Salvar')
+                .removeClass('disabled');
+
+            mostrarErrosResponse(xhr);
+        };
+
+        function mostrarErrosResponse(data) {
+
+            var retorno = data.responseJSON;
+
+            if (retorno.erros != null) {
+
+                $('#msgErro')
+                    .html('');
+
+                if (retorno.erros.length === 1) {
+
+                    var erro = retorno.erros[0];
+
+                    $('#msgErro')
+                        .removeClass('invisivel')
+                        .html(erro.ErrorMessage);
+                }
+
+                if (retorno.erros.length > 1) {
+
+                    retorno.erros.map(function (erro) {
+                        $('#msgErro').append('<li>' + erro.ErrorMessage + '</li>');
+                    });
+                }
+
+                $('#msgErro')
+                    .removeClass('invisivel');
+
+                $(window).scrollTop(0);
+            }
+        }
+
+        $('#F').click(function () {
+
+            $('#M').prop('checked', false);
+
+        });
+
+        $('#M').click(function () {
+
+            $('#F').prop('checked', false);
+
+        });
+
+        $('#chkestrangeiro').click(function () {
+      
+            if ($("#chkestrangeiro").is(':checked')) {
+           
+                $("#cnh").hide();
+                $("#rg").hide();
+                $("#carteirahabilitacao").show();
+                $("#cpf").hide();
+                $("#paises").show();
+                $('#passaport').show();
+                $("#Dt_Passaport").show();
+                $("#orgao").hide();
+                $("#Chkestrageiro").val(true);
+                $('#Celular').prop('readonly', false);
+                $('#Nextel').prop('readonly', false);
+                $('#MOP').prop('readonly', false);
+                $('#ValidadeCNH').prop('readonly', false);
+                $('#DT_Nascimento').prop('readonly', false);
+                $('#Orgao_Emissor').prop('readonly', false);
+                $('#Data_Emissao').empty().prop('readonly', false);
+                $('#Nome').empty().prop('readonly', false);
+
+            } else {
+                $("#cnh").show();
+                $("#rg").show();
+                $("#cpf").show();
+                $("#paises").hide();
+                $('#passaport').hide();
+                $("#carteirahabilitacao").hide();
+                $("#Dt_Passaport").hide();
+                $("#orgao").show();
+                $("#Chkestrageiro").val(false);
+                $('#Celular').prop('readonly', true);
+                $('#Nextel').prop('readonly', true);
+                $('#MOP').prop('readonly', true);
+                $('#ValidadeCNH').prop('readonly', true);
+                $('#DT_Nascimento').prop('readonly', true);
+                $('#Orgao_Emissor').prop('readonly', true);
+                $('#Data_Emissao').empty().prop('readonly', true);
+                $('#Nome').empty().prop('readonly', false);
+            }
+
+        });
+
+    </script>
+}

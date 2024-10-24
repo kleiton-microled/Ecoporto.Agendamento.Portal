@@ -1,0 +1,253 @@
+﻿@model Ecoporto.Agendamento.Portal.Models.ViewModels.MotoristaViewModel
+@using Ecoporto.Agendamento.Portal.Helpers
+@using Ecoporto.Agendamento.Portal.Extensions
+
+@{
+    ViewBag.Title = "Atualizar Motorista";
+}
+
+<section class="content-header">
+    <h1>
+        Gerenciamento de Motoristas
+    </h1>
+    <ol class="breadcrumb">
+        <li>
+            <a href="#">
+                <i class="fa fa-home"></i>Home
+            </a>
+        </li>
+        <li>
+            <a href="#">Motoristas</a>
+        </li>
+        <li class="active">Atualizar Motoristas</li>
+    </ol>
+</section>
+
+@using (Html.BeginForm())
+{
+    <div class="card">
+        <div class="card-header">
+            <i class="fa fa-edit fa-lg"></i>
+            Detalhes do Motorista
+            <div class="float-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse">
+                    <i class="fa fa-minus"></i>
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        @Html.ValidarFormulario(ViewContext.ViewData.ModelState, true)
+                    </div>
+                </div>
+            </div>
+
+            @Html.HiddenFor(model => model.Id)
+
+
+            <div class="row">
+                <div class="row">
+                    &nbsp;&nbsp;&nbsp; <input type="checkbox" id="chkestrangeiro" class="form-check-label" for="inlineCheckbox1">&nbsp;&nbsp;Estrangeiro
+                    @Html.HiddenFor(Model => Model.Chkestrangeiro)
+                </div>
+                <div class="form-group col-md-12">
+                    @Html.LabelFor(model => model.Nome)   @*&nbsp;&nbsp;&nbsp; <input type="checkbox" id="chkestrangeiro" class="form-check-label" for="inlineCheckbox1">&nbsp;&nbsp;Estrangeiro*@
+
+                    @Html.EditorFor(model => model.Nome, new { htmlAttributes = new { @class = "form-control", autofocus = "autofocus", maxlength = "50" } })
+                </div>
+            </div>
+
+            <div class="row">
+                <label>
+
+                    &nbsp;&nbsp;&nbsp;&nbsp;  Gênero
+                </label>
+            </div>
+            <div class="row ">
+                <div class="form-check-inline">
+                    &nbsp;&nbsp;&nbsp;&nbsp;  @Html.CheckBoxFor(model => Model.F, new { @class = "form-check-input" })
+                    <label class="form-check-label" for="inlineCheckbox1">F</label>
+                </div>
+                <div class="form-check-inline ">
+                    &nbsp;&nbsp;&nbsp;&nbsp;   @Html.CheckBoxFor(model => Model.M, new { @class = "form-check-input" })
+                    <label class="form-check-label" for="inlineCheckbox1">M</label>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="form-group col-md-3">
+                    @Html.LabelFor(model => model.DT_Nascimento)
+                    @Html.EditorFor(model => model.DT_Nascimento, new { htmlAttributes = new { @class = "form-control " } })
+                    @Html.ValidationMessageFor(m => m.DT_Nascimento, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group col-md-2">
+                    @Html.LabelFor(model => model.ValidadeCNH)
+                    @Html.EditorFor(model => model.ValidadeCNH, new { htmlAttributes = new { @class = "form-control data" } })
+                </div>
+                <div class="form-group col-md-3" id="carteirahabilitacao">
+                    @Html.LabelFor(model => model.Carteira_Habilitacao)
+                    @Html.EditorFor(model => model.Carteira_Habilitacao, new { htmlAttributes = new { @class = "form-control  " } })
+
+                </div>
+                <div class="form-group col-md-2" id="rg">
+                    @Html.LabelFor(model => model.RG)
+                    @Html.EditorFor(model => model.RG, new { htmlAttributes = new { @class = "form-control", maxlength = "15" } })
+                </div>
+                <div class="col-sm-3" id="orgao">
+                    @Html.LabelFor(model => model.Orgao_Emissor)
+                    @Html.EditorFor(model => model.Orgao_Emissor, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(m => m.Orgao_Emissor, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    @Html.LabelFor(model => model.Data_Emissao)
+                    @Html.EditorFor(model => model.Data_Emissao, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(m => m.Data_Emissao, "", new { @class = "text-danger" })
+                </div>
+                <div class="col-sm-3" id="passaport">
+                    @Html.LabelFor(model => model.Passaport)
+                    @Html.EditorFor(model => model.Passaport, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+                <div class="col-sm-3" id="Dt_Passaport">
+                    @Html.LabelFor(model => model.Dt_passaport)
+                    @Html.EditorFor(model => model.Dt_passaport, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+
+                <div class="col-sm-3" id="paises">
+                    @Html.LabelFor(model => model.Bigrama)
+                    @Html.DropDownListFor(model => model.Bigrama, new MultiSelectList(Model.Paises, "bigrama", "descr"), string.Empty, new { @class = "form-control" })
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-2" id="cpf">
+                    @Html.LabelFor(model => model.CPF)
+                    @Html.EditorFor(model => model.CPF, new { htmlAttributes = new { @class = "form-control cpf", maxlength = "14" } })
+                </div>
+                <div class="form-group col-md-2">
+                    @Html.LabelFor(model => model.Celular)
+                    @Html.EditorFor(model => model.Celular, new { htmlAttributes = new { @class = "form-control celular", maxlength = "15" } })
+                </div>
+                <div class="form-group col-md-2">
+                    @Html.LabelFor(model => model.Nextel)
+                    @Html.EditorFor(model => model.Nextel, new { htmlAttributes = new { @class = "form-control", maxlength = "20" } })
+                </div>
+                <div class="form-group col-md-2">
+                    @Html.LabelFor(model => model.MOP)
+                    @Html.EditorFor(model => model.MOP, new { htmlAttributes = new { @class = "form-control", maxlength = "15" } })
+                </div>
+                <div class="form-group col-md-4">
+                    @Html.LabelFor(model => model.UltimaAlteracao)
+                    @Html.EditorFor(model => model.UltimaAlteracao, new { htmlAttributes = new { @class = "form-control", @disabled = "disabled" } })
+                </div>
+            </div>
+
+        </div>
+
+        <div class="card-footer">
+
+            <div class="row">
+                <div class="form-group col-md-3">
+                    <a href="@Url.Action("Index", "Motoristas")" class="btn btn-secondary btn-block">Retornar</a>
+                </div>
+                <div class="form-group col-md-3 offset-md-6">
+                    <button type="submit" class="btn btn-info btn-block">Atualizar</button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+}
+
+
+@section Scripts{
+
+    <script>
+
+        $(document).ready(function () {
+
+            //$('main')
+            //    .addClass('container')
+            //    .removeClass('container-fluid');
+            var chke = $("#Chkestrangeiro").val();//remover o numero1
+
+            $("#Chkestrangeiro").hide();
+
+            if (chke == true) {
+
+                $("#chkestrangeiro").prop('checked', true);
+                $("#cnh").hide();
+                $("#rg").hide();
+                $("#carteirahabilitacao").show();
+                $("#cpf").hide();
+                $("#paises").show();
+                $('#passaport').show();
+                $("#Dt_Passaport").show();
+                $("#orgao").hide();
+                $("#Chkestrangeiro").val(true);
+            }
+
+        });
+
+        $('#Validade_CNH').mask('00/00/0000');
+        $('#Data_Emissao').mask('00/00/0000');
+        $('#DT_Nascimento').mask('00/00/0000');
+        $('#Dt_passaport').mask('00/00/0000');
+        $("#carteirahabilitacao").hide();
+        $("#Dt_Passaport").hide();
+        $('#passaport').hide();
+        $("#paises").hide();
+
+
+
+
+
+        $('#F').click(function () {
+
+            $('#M').prop('checked', false);
+
+        });
+
+        $('#M').click(function () {
+
+            $('#F').prop('checked', false);
+
+        });
+
+        $('#chkestrangeiro').click(function () {
+            if ($("#chkestrangeiro").is(':checked')) {
+
+                $("#cnh").hide();
+                $("#rg").hide();
+                $("#carteirahabilitacao").show();
+                $("#cpf").hide();
+                $("#paises").show();
+                $('#passaport').show();
+                $("#Dt_Passaport").show();
+                $("#orgao").hide();
+                $("#Chkestrangeiro").val(true);
+
+
+            } else {
+                $("#cnh").show();
+                $("#rg").show();
+                $("#cpf").show();
+                $("#paises").hide();
+                $('#passaport').hide();
+                $("#carteirahabilitacao").hide();
+                $("#Dt_Passaport").hide();
+                $("#orgao").show();
+                $("#Chkestrangeiro").val(false);
+
+            }
+
+        });
+
+    </script>
+}
