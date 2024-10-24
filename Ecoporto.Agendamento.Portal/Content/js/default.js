@@ -157,14 +157,13 @@ var options = {
 
 $("#btnPesquisaSite").easyAutocomplete(options);
 
-$("input[type=text]").keyup(function () {
+//$("input[type=text]").keyup(function () {
 
-    var start = $(this)[0].selectionStart;
-    var end = $(this)[0].selectionEnd;
+//    var start = $(this)[0].selectionStart;
+//    var end = $(this)[0].selectionEnd;
 
-    $(this).val($(this).val().toUpperCase());
-    $(this).selectRange(start, end);
-});
+//    $(this).val($(this).val().toUpperCase())$(this).selectRange(start, end);
+//});
 
 $.fn.selectRange = function (start, end) {
     $(this).each(function () {
