@@ -26,8 +26,8 @@ namespace Ecoporto.Agendamento.Portal.Controllers
 
         public ActionResult Index(int? id, bool? login)
         {
-            ViewBag.MainClass = "container-fluid top-content";
-            id = 10853305;
+          
+          id = 10853305;
 
             if (login == null)
             if (id == 0 || id == null)
@@ -50,7 +50,7 @@ namespace Ecoporto.Agendamento.Portal.Controllers
         [AllowAnonymous]
         public ActionResult Login(int? id)
         {
-            ViewBag.MainClass = "container-fluid top-content";
+
             if (id == null)
                 return Redirect(Config.UrlICC());
 
