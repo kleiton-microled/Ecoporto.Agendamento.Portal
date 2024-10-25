@@ -31,6 +31,7 @@ $(document).ready(function () {
     $('#DT_Nascimento').blur(function () {
         validarDtNascimento($(this));
     });
+
 });
 
 // Função de validação para o campo DT_Nascimento
@@ -134,6 +135,137 @@ function validarValidadeCNH(campo) {
     validadeCNHErrorElement.html('');
     return true;  // A data está válida
 }
+
+function validarCNH() {
+    // Verificar se o campo CNH está preenchido
+    var cnhValue = $('#CNH').val();
+    if (!cnhValue || cnhValue.trim() === "") {
+        // Exibir mensagem de erro se o campo estiver vazio
+        $('#cnhError').html('Por favor, insira um valor valido para a CNH.').show();
+        return;
+    }
+
+    // Limpar a mensagem de erro se o campo estiver preenchido
+    $('#cnhError').html('').hide();
+
+    var campo = $('#CNH');
+    var valor = campo.val();
+    var cnhErrorElement = $('#cnhError');
+
+    if (!valor || valor.trim() === '') {
+        // Se o campo estiver vazio, exibe a mensagem de erro
+        if (cnhErrorElement.length === 0) {
+            campo.after('<span id="cnhError" style="color:red;">CNH não pode estar vazia.</span>');
+        } else {
+            cnhErrorElement.text('CNH nao pode estar vazia.');
+        }
+        return false;
+    } else {
+        // Se o campo estiver preenchido, remove a mensagem de erro
+        cnhErrorElement.text('');
+        return true;
+    }
+}
+
+function limparFormulario() {
+    $('#frmCadastroAgendamento')[0].reset(); // Limpa todos os campos do formulário
+    $('.text-danger').text(''); // Limpa todas as mensagens de erro exibidas
+    $('#pnlMotoristaChronos').addClass('invisivel'); // Caso tenha elementos de alerta
+}
+
+// Função para bloquear todos os campos
+// Função principal de pesquisa da CNH
+function PesquisarCNH(target) {
+    event.preventDefault();
+
+    var $target = $('#' + target.id);
+    var cnh = $('#CNH').val().trim();  // Remover espaços em branco
+
+    if (!cnh) {
+        toastr.error('Por favor, informe a CNH.', 'Erro');
+        return;
+    }
+
+    // Exibe o estado de carregamento
+    mostrarCarregando($target, true);
+
+    // Pegar a URL do atributo data-url-pesquisar no botão
+    var urlPesquisarCNH = $(target).data('url-pesquisar');
+
+    $.get(urlPesquisarCNH, { cnh: cnh })
+        .done(function (resultado) {
+            if (resultado) {
+                preencherCamposMotorista(resultado);
+                $('#msgErro').html('').addClass('invisivel');
+                $('#pnlMotoristaChronos').removeClass('invisivel');
+            } else {
+                toastr.warning('Motorista não encontrado.', 'Atenção');
+                limparCamposMotorista();
+                $('#pnlMotoristaChronos').addClass('invisivel');
+            }
+            // Habilitar os campos após a pesquisa
+            habilitarCampos(true);
+        })
+        .fail(function (data) {
+            toastr.error(data.statusText || 'Erro ao buscar dados do motorista.', 'Erro');
+        })
+        .always(function () {
+            mostrarCarregando($target, false);
+        });
+}
+
+
+
+// Função para exibir o estado de carregamento
+function mostrarCarregando($element, isLoading) {
+    if (isLoading) {
+        $element.html('<i class="fa fa-spinner fa-spin"></i> aguarde...').addClass('disabled');
+    } else {
+        $element.html('<i class="fas fa-search"></i> Pesquisar').removeClass('disabled');
+    }
+}
+
+// Função para preencher os campos com os dados do motorista
+function preencherCamposMotorista(motorista) {
+    $('#Nome').val(motorista.Nome).prop('readonly', true);
+    $('#RG').val(motorista.RG).prop('readonly', false);
+    $('#CPF').val(motorista.CPF).prop('readonly', true);
+    $('#DT_Nascimento').val(motorista.DT_Nascimento).prop('readonly', false);
+    $('#Orgao_Emissor').val(motorista.Orgao_Emissor).prop('readonly', false);
+    $('#Data_Emissao').val(motorista.Data_Emissao).prop('readonly', false);
+    $('#ValidadeCNH').val(motorista.ValidadeCNH);
+    $('#Celular').val(motorista.Celular);
+    $('#UltimaAlteracao').val(motorista.UltimaAlteracao).prop('readonly', true);
+}
+
+// Função para limpar os campos
+function limparCamposMotorista() {
+    $('#Nome, #RG, #CPF, #DT_Nascimento, #Orgao_Emissor, #Data_Emissao, #ValidadeCNH, #Celular, #UltimaAlteracao').val('').prop('readonly', false);
+    $('#UltimaAlteracao').prop('readonly', true);  // Este sempre deve ser readonly
+}
+
+// Função para habilitar ou desabilitar campos
+function habilitarCampos(enable) {
+    var isReadonly = !enable;
+    $('#ValidadeCNH, #Celular, #Nextel, #MOP').prop('readonly', isReadonly);
+}
+
+// Desabilitar os campos inicialmente ao carregar o formulário
+$(document).ready(function () {
+    habilitarCampos(false);  // Desabilitar os campos no início
+
+    // Ativar/desativar o botão de pesquisa baseado na presença da CNH
+    $('#CNH').on('input', function () {
+        var cnh = $(this).val().trim();
+        $('#btnPesquisarCNH').prop('disabled', !cnh);  // Desabilita se o campo estiver vazio
+    });
+});
+
+
+
+
+
+
 
 
 

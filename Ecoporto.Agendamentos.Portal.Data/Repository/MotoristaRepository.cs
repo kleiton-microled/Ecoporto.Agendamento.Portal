@@ -341,7 +341,7 @@ namespace Ecoporto.Agendamento.Portal.Data.Repository
                        
                         a.estrangeiro,
                         a.genero,
-                       to_char( a.dt_nascimento,'dd/MM/yyyy') as DT_NASCIMENTO,
+                        DT_NASCIMENTO,
                         NVL(B.FLAG_INATIVO, 0) As INATIVO
                     FROM
                         OPERADOR.TB_AG_MOTORISTAS A

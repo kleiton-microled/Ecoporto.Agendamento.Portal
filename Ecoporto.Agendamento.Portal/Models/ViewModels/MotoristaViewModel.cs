@@ -51,11 +51,11 @@ namespace Ecoporto.Agendamento.Portal.Models.ViewModels
         public string Orgao_Emissor { get; set; }
 
         [Display(Name = "Data de Emissão")]
-        public string Data_Emissao { get; set; }
+        public DateTime Data_Emissao { get; set; }
 
    
         [Display(Name = "Data de Nascimento")]
-        public string DT_Nascimento { get; set; }
+        public DateTime DT_Nascimento { get; set; }
 
      
         [Display(Name = "Carteira de Habilitação")]

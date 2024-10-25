@@ -8,6 +8,7 @@ using Dapper;
 using Oracle.ManagedDataAccess.Client; 
 using Ecoporto.Agendamento.Portal.Domain.Entities;
 using Ecoporto.Agendamento.Portal.Domain.Interfaces.Repository;
+using System.Web.Mvc;
 
 namespace Ecoporto.Agendamento.Portal.Data.Repository
 {
@@ -31,6 +32,7 @@ namespace Ecoporto.Agendamento.Portal.Data.Repository
                     sb.AppendLine(" WHERE  ");
                     sb.AppendLine(" FLAG_ATIVO = 1 ");
 
+                    //ViewBag.MainClass = "container-fluid top-content";
 
                     var query = _db.Query<TiposAgendamentos>(sb.ToString()).AsEnumerable();
 

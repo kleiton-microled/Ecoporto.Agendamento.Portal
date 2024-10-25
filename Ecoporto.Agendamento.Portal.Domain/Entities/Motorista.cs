@@ -52,10 +52,10 @@ namespace Ecoporto.Agendamento.Portal.Domain.Entities
         public string DT_Passaport { get; set; }
         public string Genero { get; set; }
 
-        public string DT_NASCIMENTO { get; set; }
+        public DateTime DT_NASCIMENTO { get; set; }
         public string Orgao_Emissor { get; set; }
 
-        public string Data_Emissao { get; set; }
+        public DateTime Data_Emissao { get; set; }
 
         public string DT_Carteira_Habilitacao { get; set; }
 
