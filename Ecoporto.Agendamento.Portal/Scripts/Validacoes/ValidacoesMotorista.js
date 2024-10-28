@@ -171,9 +171,10 @@ function limparFormulario() {
     $('#frmCadastroAgendamento')[0].reset(); // Limpa todos os campos do formulário
     $('.text-danger').text(''); // Limpa todas as mensagens de erro exibidas
     $('#pnlMotoristaChronos').addClass('invisivel'); // Caso tenha elementos de alerta
+    $('#Nome, #RG, #CPF, #DT_Nascimento, #Orgao_Emissor, #Data_Emissao, #ValidadeCNH, #Celular, #UltimaAlteracao').val('').prop('readonly', true);
+    $('#UltimaAlteracao').prop('readonly', true);  // Este sempre deve ser readonly
 }
 
-// Função para bloquear todos os campos
 // Função principal de pesquisa da CNH
 function PesquisarCNH(target) {
     event.preventDefault();
@@ -214,9 +215,15 @@ function PesquisarCNH(target) {
         });
 }
 
-
-
 // Função para exibir o estado de carregamento
+$('#btnSalvarMotorista').click(function () {
+    $(this)
+        .html('<i class="fa fa-spinner fa-spin"></i> Aguarde...')
+        .addClass('disabled');
+
+    $('#msgErro').html('').addClass('invisivel');
+});
+
 function mostrarCarregando($element, isLoading) {
     if (isLoading) {
         $element.html('<i class="fa fa-spinner fa-spin"></i> aguarde...').addClass('disabled');
@@ -224,6 +231,14 @@ function mostrarCarregando($element, isLoading) {
         $element.html('<i class="fas fa-search"></i> Pesquisar').removeClass('disabled');
     }
 }
+
+// Sucesso ao salvar
+var mensagemSucesso = function (xhr, status) {
+    $('#msgErro').html('').addClass('invisivel');
+    $('#msgSucesso').removeClass('invisivel').html('Cadastro realizado com sucesso!');
+    $('#btnSalvarMotorista').html('Salvar').removeClass('disabled');
+    limparFormulario(); // Limpa o formulário após a mensagem de sucesso
+};
 
 // Função para preencher os campos com os dados do motorista
 function preencherCamposMotorista(motorista) {
@@ -247,8 +262,44 @@ function limparCamposMotorista() {
 // Função para habilitar ou desabilitar campos
 function habilitarCampos(enable) {
     var isReadonly = !enable;
-    $('#ValidadeCNH, #Celular, #Nextel, #MOP').prop('readonly', isReadonly);
+    $('#ValidadeCNH, #Celular, #Nextel, #MOP', '#Orgao_Emissor').prop('readonly', isReadonly);
 }
+
+function mostrarEsconderCamposEstrangeiro() {
+    var isEstrangeiro = $('#chkestrangeiro').is(':checked');
+
+    if (isEstrangeiro) {
+        $("#cnh, #rg, #cpf").hide();
+        $("#carteirahabilitacao, #paises, #passaport, #Dt_Passaport, #orgao").show();
+
+        $('#Celular, #Nextel, #MOP, #ValidadeCNH, #DT_Nascimento, #Orgao_Emissor, #Data_Emissao, #Nome')
+            .prop('readonly', false);
+
+        $("#Chkestrageiro").val(true);
+    } else {
+        $("#cnh, #rg, #cpf").show();
+        $("#carteirahabilitacao, #paises, #passaport, #Dt_Passaport, #orgao").hide();
+
+        $('#Celular, #Nextel, #MOP, #ValidadeCNH, #DT_Nascimento, #Orgao_Emissor, #Data_Emissao, #Nome')
+            .prop('readonly', true);
+
+        $("#Chkestrageiro").val(false);
+    }
+}
+
+$(document).ready(function () {
+    // Adiciona um timeout de 2 segundos antes de chamar a função na inicialização
+    setTimeout(function () {
+        mostrarEsconderCamposEstrangeiro();
+    }, 5000);
+
+    // Chama a função ao clicar no checkbox
+    $('#chkestrangeiro').click(mostrarEsconderCamposEstrangeiro);
+});
+
+
+
+
 
 // Desabilitar os campos inicialmente ao carregar o formulário
 $(document).ready(function () {

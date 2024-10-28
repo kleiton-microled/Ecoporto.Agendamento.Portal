@@ -5,157 +5,155 @@
     ViewBag.Title = "Atualizar Veículos";
 }
 
-<div class="row">
+<section class="content-header mt-5">
+    <h1>
+        Gerenciamento de Veículos
+    </h1>
+    <ol class="breadcrumb">
+        <li>
+            <a href="#">
+                <i class="fa fa-home"></i>Home
+            </a>
+        </li>
+        <li>
+            <a href="#">Veículos</a>
+        </li>
+        <li class="active">Atualizar Veículos</li>
+    </ol>
+</section>
 
-    <div class="col-md-8 offset-md-2">
 
-        <section class="content-header">
-            <h1>
-                Gerenciamento de Veículos
-            </h1>
-            <ol class="breadcrumb">
-                <li>
-                    <a href="#">
-                        <i class="fa fa-home"></i>Home
-                    </a>
-                </li>
-                <li>
-                    <a href="#">Veículos</a>
-                </li>
-                <li class="active">Atualizar Veículos</li>
-            </ol>
-        </section>
 
-        @using (Html.BeginForm())
-        {
-            <div class="card">
-                <div class="card-header">
-                    <i class="fa fa-edit fa-lg"></i>
-                    Detalhes do Veículo
-                    <div class="float-right">
-                        <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse">
-                            <i class="fa fa-minus"></i>
-                        </button>
+@using (Html.BeginForm())
+{
+    <div class="card">
+        <div class="card-header">
+            <i class="fa fa-edit fa-lg"></i>
+            Detalhes do Veículo
+            <div class="float-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse">
+                    <i class="fa fa-minus"></i>
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        @Html.ValidarFormulario(ViewContext.ViewData.ModelState, true)
                     </div>
                 </div>
-                <div class="card-body">
+            </div>
 
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                @Html.ValidarFormulario(ViewContext.ViewData.ModelState, true)
-                            </div>
-                        </div>
-                    </div>
+            @Html.HiddenFor(model => model.Id)
 
-                    @Html.HiddenFor(model => model.Id)
-
-                    <div class="row">
-                        <div class="form-group col-md-3">
-                            @Html.LabelFor(model => model.Cavalo)
-                            @Html.EditorFor(model => model.Cavalo, new { htmlAttributes = new { @class = "form-control placa", @readonly = "@readonly" } })
-                        </div>
-
-                        <div class="form-group col-md-3">
-                            @Html.LabelFor(model => model.Carreta)
-                            @Html.EditorFor(model => model.Carreta, new { htmlAttributes = new { @class = "form-control placa", @readonly = "@readonly" } })
-                        </div>
-
-                    </div>
-                    <div class="row">
-                        <div class="form-group col-md-6">
-                            @Html.LabelFor(model => model.TipoCaminhaoId)
-                            @Html.DropDownListFor(c => c.TipoCaminhaoId, new MultiSelectList(Model.TiposVeiculos, "Id", "Descricao"), string.Empty, new { @class = "form-control" })
-                        </div>
-                    </div>
-
-                    <div class="row">
-
-
-                        <div class="form-group col-sm-6">
-                            @Html.LabelFor(model => model.Marca)
-                            @Html.EditorFor(model => model.Marca, new { htmlAttributes = new { @class = "form-control" } })
-
-                        </div>
-
-
-                        <div class="col-sm-2">
-                            @Html.LabelFor(model => model.Ano_Fabricacao)
-                            @Html.EditorFor(model => model.Ano_Fabricacao, new { htmlAttributes = new { @class = "form-control" } })
-
-                        </div>
-
-
-                        <div class="col-sm-2">
-                            @Html.LabelFor(model => model.Ano_Modelo)
-                            @Html.EditorFor(model => model.Ano_Modelo, new { htmlAttributes = new { @class = "form-control" } })
-
-                        </div>
-
-
-
-                        <div class="col-sm-2">
-                            @Html.LabelFor(model => model.Tanque)
-                            @Html.EditorFor(model => model.Tanque, new { htmlAttributes = new { @class = "form-control", @placeholder = "Capacidade em litros" } })
-
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="form-group col-md-6">
-                            @Html.LabelFor(model => model.Modelo)
-                            @Html.EditorFor(model => model.Modelo, new { htmlAttributes = new { @class = "form-control", maxlength = "20" } })
-                        </div>
-                        <div class="form-group col-md-2">
-                            @Html.LabelFor(model => model.Cor)
-                            @Html.EditorFor(model => model.Cor, new { htmlAttributes = new { @class = "form-control", maxlength = "20" } })
-                        </div>
-                        <div class="form-group col-md-2">
-                            @Html.LabelFor(model => model.Tara)
-                            @Html.EditorFor(model => model.Tara, new { htmlAttributes = new { @class = "form-control", maxlength = "6" } })
-                        </div>
-                        <div class=" col-sm-2">
-                            <br />
-                            <div class="form-check form-check-inline" style="align-items:end">
-                                @Html.CheckBoxFor(model => Model.Rastreador, new { @class = "form-check-input" })
-                                <label class="form-check-label" for="inlineCheckbox1">Tem Rastreador ?</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="form-group col-md-6">
-                            @Html.LabelFor(model => model.Chassi)
-                            @Html.EditorFor(model => model.Chassi, new { htmlAttributes = new { @class = "form-control", maxlength = "20" } })
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="form-group col-md-6">
-                            @Html.LabelFor(model => model.Renavam)
-                            @Html.EditorFor(model => model.Renavam, new { htmlAttributes = new { @class = "form-control", maxlength = "11" } })
-                        </div>
-                    </div>
-
+            <div class="row">
+                <div class="form-group col-md-3">
+                    @Html.LabelFor(model => model.Cavalo)
+                    @Html.EditorFor(model => model.Cavalo, new { htmlAttributes = new { @class = "form-control placa", @readonly = "@readonly" } })
                 </div>
 
-                <div class="card-footer">
-
-                    <div class="row">
-                        <div class="form-group col-md-3">
-                            <a href="@Url.Action("Index", "Veiculos")" class="btn btn-secondary btn-block">Retornar</a>
-                        </div>
-                        <div class="form-group col-md-3 offset-md-6">
-                            <button type="submit" class="btn btn-info btn-block">Salvar</button>
-                        </div>
-                    </div>
-
+                <div class="form-group col-md-3">
+                    @Html.LabelFor(model => model.Carreta)
+                    @Html.EditorFor(model => model.Carreta, new { htmlAttributes = new { @class = "form-control placa", @readonly = "@readonly" } })
                 </div>
 
             </div>
+            <div class="row">
+                <div class="form-group col-md-6">
+                    @Html.LabelFor(model => model.TipoCaminhaoId)
+                    @Html.DropDownListFor(c => c.TipoCaminhaoId, new MultiSelectList(Model.TiposVeiculos, "Id", "Descricao"), string.Empty, new { @class = "form-control" })
+                </div>
+            </div>
 
-        }
+            <div class="row">
+
+
+                <div class="form-group col-sm-6">
+                    @Html.LabelFor(model => model.Marca)
+                    @Html.EditorFor(model => model.Marca, new { htmlAttributes = new { @class = "form-control" } })
+
+                </div>
+
+
+                <div class="col-sm-2">
+                    @Html.LabelFor(model => model.Ano_Fabricacao)
+                    @Html.EditorFor(model => model.Ano_Fabricacao, new { htmlAttributes = new { @class = "form-control" } })
+
+                </div>
+
+
+                <div class="col-sm-2">
+                    @Html.LabelFor(model => model.Ano_Modelo)
+                    @Html.EditorFor(model => model.Ano_Modelo, new { htmlAttributes = new { @class = "form-control" } })
+
+                </div>
+
+
+
+                <div class="col-sm-2">
+                    @Html.LabelFor(model => model.Tanque)
+                    @Html.EditorFor(model => model.Tanque, new { htmlAttributes = new { @class = "form-control", @placeholder = "Capacidade em litros" } })
+
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-6">
+                    @Html.LabelFor(model => model.Modelo)
+                    @Html.EditorFor(model => model.Modelo, new { htmlAttributes = new { @class = "form-control", maxlength = "20" } })
+                </div>
+                <div class="form-group col-md-2">
+                    @Html.LabelFor(model => model.Cor)
+                    @Html.EditorFor(model => model.Cor, new { htmlAttributes = new { @class = "form-control", maxlength = "20" } })
+                </div>
+                <div class="form-group col-md-2">
+                    @Html.LabelFor(model => model.Tara)
+                    @Html.EditorFor(model => model.Tara, new { htmlAttributes = new { @class = "form-control", maxlength = "6" } })
+                </div>
+                <div class=" col-sm-2">
+                    <br />
+                    <div class="form-check form-check-inline" style="align-items:end">
+                        @Html.CheckBoxFor(model => Model.Rastreador, new { @class = "form-check-input" })
+                        <label class="form-check-label" for="inlineCheckbox1">Tem Rastreador ?</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-6">
+                    @Html.LabelFor(model => model.Chassi)
+                    @Html.EditorFor(model => model.Chassi, new { htmlAttributes = new { @class = "form-control", maxlength = "20" } })
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-6">
+                    @Html.LabelFor(model => model.Renavam)
+                    @Html.EditorFor(model => model.Renavam, new { htmlAttributes = new { @class = "form-control", maxlength = "11" } })
+                </div>
+            </div>
+
+        </div>
+
+        <div class="card-footer">
+
+            <div class="row">
+                <div class="form-group col-md-3">
+                    <a href="@Url.Action("Index", "Veiculos")" class="btn btn-secondary btn-block">Retornar</a>
+                </div>
+                <div class="form-group col-md-3 offset-md-6">
+                    <button type="submit" class="btn btn-info btn-block">Salvar</button>
+                </div>
+            </div>
+
+        </div>
+
     </div>
 
-</div>
+}
+
+
+
 
 
 @section Css{
@@ -178,7 +176,7 @@
 
             $('#Renavam').mask('99999999999');
 
-          //  $('#IdModelo').prop("disabled", true);
+            //  $('#IdModelo').prop("disabled", true);
             $('#Ano_Fabricacao').mask('9999');
             $('#Ano_Modelo').mask('9999');
             //var marca = $('#Marca').val();

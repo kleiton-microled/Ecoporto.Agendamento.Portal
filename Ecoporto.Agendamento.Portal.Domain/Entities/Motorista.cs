@@ -16,10 +16,6 @@ namespace Ecoporto.Agendamento.Portal.Domain.Entities
 
         }
 
-  
-
-  
-
         public int TransportadoraId { get; set; }
         public int Id { get; set; }
         public string Nome { get; set; }

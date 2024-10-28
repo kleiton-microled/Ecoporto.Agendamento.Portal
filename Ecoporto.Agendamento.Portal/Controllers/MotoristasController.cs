@@ -54,38 +54,77 @@ namespace Ecoporto.Agendamento.Portal.Controllers
             return View(cadastrar);
         }
 
+        //[HttpPost]
+        //public ActionResult Cadastrar([Bind(Include = "Id, Nome, CNH, ValidadeCNH, RG, CPF, Celular, Nextel, MOP,Orgao_emissor,Data_emissao,dt_nascimento,TransportadoraId,carteira_habilitacao,Passaport,Bigrama,chkestrangeiro,dt_passaport,M,F")] MotoristaViewModel viewModel)
+        //{
+        //    ViewBag.MainClass = "container-fluid top-content";
+
+        //    try
+        //    {
+        //        // Validações iniciais
+        //        if (string.IsNullOrEmpty(viewModel.Nome))
+        //            return RetornarErro("Nome deve ser preenchido");
+
+        //        if (!ValidarDataEmissao(viewModel.Data_Emissao))
+        //            return RetornarErro("Data de Emissão inválida!");
+
+        //        if (!ValidarDataNascimento(viewModel.DT_Nascimento))
+        //            return RetornarErro("Data de Nascimento inválida!");
+
+        //        if (!ValidarNomeMotorista(viewModel.Nome))
+        //            return RetornarErro("Nome do motorista inválido");
+
+        //        if (!viewModel.Chkestrangeiro)
+        //        {
+        //            // Validações para motorista não estrangeiro
+        //            if (!ValidarMotoristaNacional(viewModel))
+        //                return RetornarErro("Erro na validação do motorista nacional.");
+        //        }
+        //        else
+        //        {
+        //            // Validações para motorista estrangeiro
+        //            if (!ValidarMotoristaEstrangeiro(viewModel))
+        //                return RetornarErro("Erro na validação do motorista estrangeiro.");
+        //        }
+
+        //        // Preparar o objeto para cadastro
+        //        var idTranportadora = _veiculoAppServices.ObterIdTransportadora(User.ObterCNPJTransportadora());
+        //        var motorista = MapearMotorista(viewModel, idTranportadora);
+
+        //        // Cadastrar motorista
+        //        _motoristaAppService.Cadastrar(motorista);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return RetornarErro(ex.Message);
+        //    }
+
+        //    return new HttpStatusCodeResult(HttpStatusCode.NoContent);
+        //}
+
         [HttpPost]
         public ActionResult Cadastrar([Bind(Include = "Id, Nome, CNH, ValidadeCNH, RG, CPF, Celular, Nextel, MOP,Orgao_emissor,Data_emissao,dt_nascimento,TransportadoraId,carteira_habilitacao,Passaport,Bigrama,chkestrangeiro,dt_passaport,M,F")] MotoristaViewModel viewModel)
         {
             ViewBag.MainClass = "container-fluid top-content";
-
+            viewModel.Paises = _motoristaAppService.ObterPaises().ToList();
             try
             {
-                // Validações iniciais
-                if (string.IsNullOrEmpty(viewModel.Nome))
-                    return RetornarErro("Nome deve ser preenchido");
-
-                if (!ValidarDataEmissao(viewModel.Data_Emissao))
-                    return RetornarErro("Data de Emissão inválida!");
-
-                if (!ValidarDataNascimento(viewModel.DT_Nascimento))
-                    return RetornarErro("Data de Nascimento inválida!");
-
-                if (!ValidarNomeMotorista(viewModel.Nome))
-                    return RetornarErro("Nome do motorista inválido");
-
-                if (!viewModel.Chkestrangeiro)
+                if (viewModel.Chkestrangeiro == false)
                 {
                     // Validações para motorista não estrangeiro
                     if (!ValidarMotoristaNacional(viewModel))
-                        return RetornarErro("Erro na validação do motorista nacional.");
+                        ModelState.AddModelError(string.Empty, "Erro na validação do motorista nacional.");
                 }
                 else
                 {
                     // Validações para motorista estrangeiro
                     if (!ValidarMotoristaEstrangeiro(viewModel))
-                        return RetornarErro("Erro na validação do motorista estrangeiro.");
+                        ModelState.AddModelError(string.Empty, "Erro na validação do motorista estrangeiro.");
                 }
+
+                // Se houver erros no ModelState, retorne a View para exibir as mensagens
+                if (!ModelState.IsValid)
+                    return View(viewModel);
 
                 // Preparar o objeto para cadastro
                 var idTranportadora = _veiculoAppServices.ObterIdTransportadora(User.ObterCNPJTransportadora());
@@ -96,99 +135,12 @@ namespace Ecoporto.Agendamento.Portal.Controllers
             }
             catch (Exception ex)
             {
-                return RetornarErro(ex.Message);
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View(viewModel);
             }
 
             return new HttpStatusCodeResult(HttpStatusCode.NoContent);
         }
-
-        // Funções de Validação
-        private bool ValidarDataEmissao(DateTime? dataEmissao)
-        {
-            if (dataEmissao == null || Convert.ToDateTime(dataEmissao) > DateTime.Now)
-                return false;
-
-            return true;
-        }
-
-        private bool ValidarDataNascimento(DateTime? dataNascimento)
-        {
-            if (dataNascimento == null ||
-                Convert.ToDateTime(dataNascimento) > DateTime.Now.AddYears(-18) ||
-                Convert.ToDateTime(dataNascimento) < DateTime.Now.AddYears(-100))
-                return false;
-
-            return true;
-        }
-
-        private bool ValidarNomeMotorista(string nome)
-        {
-            string[] motoristas = nome.Split(' ');
-
-            if (motoristas[0].Length < 3 || motoristas.Count() == 1 || nome.Length < 3)
-                return false;
-
-            return true;
-        }
-
-        private bool ValidarMotoristaNacional(MotoristaViewModel viewModel)
-        {
-            if (!Validation.CPFValido(viewModel.CPF) ||
-                Convert.ToDateTime(viewModel.ValidadeCNH) <= DateTime.Now.AddDays(-30) ||
-                Convert.ToDateTime(viewModel.ValidadeCNH) >= DateTime.Now.AddYears(10))
-                return false;
-
-            var motoristaComCNH = _motoristaAppService.ObterMotoristaPorCNH(viewModel.CNH, Convert.ToInt32(User.ObterTransportadoraID()));
-            if (motoristaComCNH != null)
-                return false;
-
-            var motoristaComCPF = _motoristaAppService.ObterMotoristaPorCPF(viewModel.CPF, Convert.ToInt32(User.ObterTransportadoraID()));
-            if (motoristaComCPF != null)
-                return false;
-
-            return true;
-        }
-
-        private bool ValidarMotoristaEstrangeiro(MotoristaViewModel viewModel)
-        {
-            if (string.IsNullOrEmpty(viewModel.Passaport) ||
-                Convert.ToDateTime(viewModel.Dt_passaport) < DateTime.Now ||
-                string.IsNullOrEmpty(viewModel.Bigrama) ||
-                string.IsNullOrEmpty(viewModel.Carteira_Habilitacao))
-                return false;
-
-            return true;
-        }
-
-        // Função de Mapeamento
-        private Motorista MapearMotorista(MotoristaViewModel viewModel, int idTransportadora)
-        {
-            var motorista = new Motorista
-            {
-                Celular = viewModel.Celular,
-                CNH = string.IsNullOrEmpty(viewModel.CNH) ? "0" : viewModel.CNH,
-                CPF = viewModel.CPF,
-                Nextel = viewModel.Nextel,
-                Nome = viewModel.Nome,
-                Data_Emissao = viewModel.Data_Emissao,
-                ValidadeCNH = viewModel.ValidadeCNH,
-                TransportadoraId = idTransportadora,
-                MOP = viewModel.MOP,
-                RG = viewModel.RG,
-                Orgao_Emissor = viewModel.Orgao_Emissor,
-                DT_Passaport = viewModel.Dt_passaport,
-                Bigrama = viewModel.Bigrama,
-                Carteira_Habilitacao = viewModel.Carteira_Habilitacao,
-                DT_Carteira_Habilitacao = viewModel.DT_Carteira_Habilitacao,
-                Estrangeiro = viewModel.Chkestrangeiro ? 1 : 0,
-                Genero = viewModel.F ? "F" : "M",
-                Passaport = viewModel.Passaport,
-                DT_NASCIMENTO = viewModel.DT_Nascimento
-            };
-
-            return motorista;
-        }
-
 
         [HttpGet]
         public ActionResult Atualizar(int? id)
@@ -241,7 +193,7 @@ namespace Ecoporto.Agendamento.Portal.Controllers
                 viewModel.F = true;
                 viewModel.M = false;
             }
-
+            viewModel.DT_Nascimento.ToString("dd/MM/yyyyy");
             return View(viewModel);
         }
 
@@ -411,6 +363,7 @@ namespace Ecoporto.Agendamento.Portal.Controllers
                 motoristaBusca.Nextel = viewModel.Nextel;
                 motoristaBusca.MOP = viewModel.MOP;
                 motoristaBusca.Celular = viewModel.Celular;
+                motoristaBusca.CNH = viewModel.CNH;
 
                 motoristaBusca.Estrangeiro = 0;
                 if (viewModel.Chkestrangeiro == true)
@@ -466,8 +419,8 @@ namespace Ecoporto.Agendamento.Portal.Controllers
                 if (motoristaBusca == null)
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Motorista não encontrado");
 
-                if (motoristaBusca.TransportadoraId != User.ObterTransportadoraID())
-                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Motorista não pertence a transportadora");
+                //if (motoristaBusca.TransportadoraId != User.ObterTransportadoraID())
+                //    return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Motorista não pertence a transportadora");
 
                 _motoristaAppService.Excluir(motoristaBusca.Id);
             }
@@ -503,5 +456,94 @@ namespace Ecoporto.Agendamento.Portal.Controllers
 
             return null;
         }
+
+
+        #region utils
+        // Funções de Validação
+        private bool ValidarDataEmissao(DateTime? dataEmissao)
+        {
+            if (dataEmissao == null || Convert.ToDateTime(dataEmissao) > DateTime.Now)
+                return false;
+
+            return true;
+        }
+
+        private bool ValidarDataNascimento(DateTime? dataNascimento)
+        {
+            if (dataNascimento == null ||
+                Convert.ToDateTime(dataNascimento) > DateTime.Now.AddYears(-18) ||
+                Convert.ToDateTime(dataNascimento) < DateTime.Now.AddYears(-100))
+                return false;
+
+            return true;
+        }
+
+        private bool ValidarNomeMotorista(string nome)
+        {
+            if (string.IsNullOrWhiteSpace(nome))
+                return false;
+
+            string[] motoristas = nome.Split(' ');
+            return motoristas[0].Length >= 3 && motoristas.Length > 1;
+        }
+
+        private bool ValidarMotoristaNacional(MotoristaViewModel viewModel)
+        {
+            if (!Validation.CPFValido(viewModel.CPF) ||
+                Convert.ToDateTime(viewModel.ValidadeCNH) <= DateTime.Now.AddDays(-30) ||
+                Convert.ToDateTime(viewModel.ValidadeCNH) >= DateTime.Now.AddYears(10))
+                return false;
+
+            var motoristaComCNH = _motoristaAppService.ObterMotoristaPorCNH(viewModel.CNH, Convert.ToInt32(User.ObterTransportadoraID()));
+            if (motoristaComCNH != null)
+                return false;
+
+            var motoristaComCPF = _motoristaAppService.ObterMotoristaPorCPF(viewModel.CPF, Convert.ToInt32(User.ObterTransportadoraID()));
+            if (motoristaComCPF != null)
+                return false;
+
+            return true;
+        }
+
+        private bool ValidarMotoristaEstrangeiro(MotoristaViewModel viewModel)
+        {
+            if (string.IsNullOrEmpty(viewModel.Passaport) ||
+                Convert.ToDateTime(viewModel.Dt_passaport) < DateTime.Now ||
+                string.IsNullOrEmpty(viewModel.Bigrama) ||
+                string.IsNullOrEmpty(viewModel.Carteira_Habilitacao))
+                return false;
+
+            return true;
+        }
+
+        // Função de Mapeamento
+        private Motorista MapearMotorista(MotoristaViewModel viewModel, int idTransportadora)
+        {
+            var motorista = new Motorista
+            {
+                Celular = viewModel.Celular,
+                CNH = string.IsNullOrEmpty(viewModel.CNH) ? "0" : viewModel.CNH,
+                CPF = viewModel.CPF,
+                Nextel = viewModel.Nextel,
+                Nome = viewModel.Nome,
+                Data_Emissao = viewModel.Data_Emissao,
+                ValidadeCNH = viewModel.ValidadeCNH,
+                TransportadoraId = idTransportadora,
+                MOP = viewModel.MOP,
+                RG = viewModel.RG,
+                Orgao_Emissor = viewModel.Orgao_Emissor,
+                DT_Passaport = viewModel.Dt_passaport,
+                Bigrama = viewModel.Bigrama,
+                Carteira_Habilitacao = viewModel.Carteira_Habilitacao,
+                DT_Carteira_Habilitacao = viewModel.DT_Carteira_Habilitacao,
+                Estrangeiro = viewModel.Chkestrangeiro ? 1 : 0,
+                Genero = viewModel.F ? "F" : "M",
+                Passaport = viewModel.Passaport,
+                DT_NASCIMENTO = viewModel.DT_Nascimento
+            };
+
+            return motorista;
+        }
+        #endregion
     }
 }

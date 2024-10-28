@@ -57,6 +57,13 @@
                         <input type="checkbox" id="chkestrangeiro" class="form-check-label" for="inlineCheckbox1"> Estrangeiro
                         @Html.HiddenFor(Model => Model.Chkestrangeiro)
                     </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-2" id="cnh">
+                        @Html.LabelFor(model => model.CNH, new { @class = "label-required" })
+                        @Html.EditorFor(model => model.CNH, new { htmlAttributes = new { @class = "form-control", @id = "CNH", maxlength = "15", autofocus = "autofocus" } })
+                        <div id="cnhError" class="text-danger"></div>
+                    </div>
                     <div class="form-group col-md-12">
                         @Html.LabelFor(model => model.Nome, new { @class = "label-required" })
                         @Html.EditorFor(model => model.Nome, new { htmlAttributes = new { @class = "form-control", autofocus = "autofocus", maxlength = "50" } })
@@ -121,17 +128,17 @@
                     </div>
 
                     <div class="col-sm-3" id="passaport">
-                        @Html.LabelFor(model => model.Passaport)
+                        @Html.LabelFor(model => model.Passaport, new { @class = "label-required" })
                         @Html.EditorFor(model => model.Passaport, new { htmlAttributes = new { @class = "form-control" } })
                     </div>
 
                     <div class="col-sm-3" id="Dt_Passaport">
-                        @Html.LabelFor(model => model.Dt_passaport)
+                        @Html.LabelFor(model => model.Dt_passaport, new { @class = "label-required" })
                         @Html.EditorFor(model => model.Dt_passaport, new { htmlAttributes = new { @class = "form-control" } })
                     </div>
 
                     <div class="col-sm-3" id="paises">
-                        @Html.LabelFor(model => model.Bigrama)
+                        @Html.LabelFor(model => model.Bigrama, new { @class = "label-required" })
                         @Html.DropDownListFor(model => model.Bigrama, new MultiSelectList(Model.Paises, "bigrama", "descr"), string.Empty, new { @class = "form-control" })
                     </div>
                 </div>
@@ -255,17 +262,17 @@
             $("#carteirahabilitacao, #Dt_Passaport, #passaport, #paises").hide();
 
             var chke = $("#Chkestrangeiro").val();
+            
+            //if (chke == true) {
+            //    // Se o estrangeiro estiver marcado, exibe as opções corretas
+            //    $("#chkestrangeiro").prop('checked', true);
+            //    toggleEstrangeiroOptions(true);
+            //}
 
-            if (chke == true) {
-                // Se o estrangeiro estiver marcado, exibe as opções corretas
-                $("#chkestrangeiro").prop('checked', true);
-                toggleEstrangeiroOptions(true);
-            }
-
-            // Alternar entre opções de estrangeiro
-            $('#chkestrangeiro').click(function () {
-                toggleEstrangeiroOptions($(this).is(':checked'));
-            });
+            //// Alternar entre opções de estrangeiro
+            //$('#chkestrangeiro').click(function () {
+            //    toggleEstrangeiroOptions($(this).is(':checked'));
+            //});
 
             // Alternar gênero
             $('#F').click(function () {
@@ -276,21 +283,21 @@
                 $('#F').prop('checked', false);
             });
 
-           
+
         });
 
         // Função para alternar exibição de campos para estrangeiros
-        function toggleEstrangeiroOptions(isEstrangeiro) {
-            if (isEstrangeiro) {
-                $("#cnh, #rg, #cpf, #orgao").hide();
-                $("#carteirahabilitacao, #paises, #passaport, #Dt_Passaport").show();
-                $("#Chkestrangeiro").val(true);
-            } else {
-                $("#cnh, #rg, #cpf, #orgao").show();
-                $("#carteirahabilitacao, #paises, #passaport, #Dt_Passaport").hide();
-                $("#Chkestrangeiro").val(false);
-            }
-        }
+        //function toggleEstrangeiroOptions(isEstrangeiro) {
+        //    if (isEstrangeiro) {
+        //        $("#CNH, #rg, #cpf, #orgao").hide();
+        //        $("#carteirahabilitacao, #paises, #passaport, #Dt_Passaport").show();
+        //        $("#Chkestrangeiro").val(true);
+        //    } else {
+        //        $("#CNH, #rg, #cpf, #orgao").show();
+        //        $("#carteirahabilitacao, #paises, #passaport, #Dt_Passaport").hide();
+        //        $("#Chkestrangeiro").val(false);
+        //    }
+        //}
     </script>
 }
 

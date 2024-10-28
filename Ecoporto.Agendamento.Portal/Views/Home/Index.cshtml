@@ -10,7 +10,7 @@
     </h1>
     <ol class="breadcrumb">
         <li>
-            <a href="@Url.Content("http://op.ecoportosantos.com.br/icc/Default.aspx?site=1")">
+            <a href="@Url.Content("http://homop.ecoportosantos.com.br/icc/Default.aspx")">
                 <i class="fa fa-home"></i>Home
             </a>
         </li>
@@ -28,32 +28,46 @@
                     <i class="fa fa-check"></i> Selecione o agendamento desejado.
                 </h4>
             </div>
-        </div>        
+        </div>
         <div class="row padding-bottom-20">
             @{
                 foreach (var item in ViewBag.ListarSites)
                 {
-                        
                     <div class="col-md-4 link" style="position:relative; left: 40px; top:10px; padding-bottom:30px;" data-id="@item.Id" data-link="@item.Link" data-descr="@item.Descricao">
-                        <button type="button" class="btn btn-outline-success  btn-square-md" data-mdb-ripple-color="dark" style="height: 120px; width:300px;">
-                            <span style="position:relative; top:15px;">
-                                @Html.Raw(item.Image)
-                            </span>
-                            @item.Descricao<br /><br />
-                            <span style="float:right">
-                                <i class="fa fa-sign-in-alt"></i>
-                                Acessar
+                        <button type="button" class="btn btn-outline-success btn-square-md d-flex flex-column" data-mdb-ripple-color="dark" style="height: 150px; width:300px;">
+
+                            <!-- Título no topo -->
+                            <div style="font-weight:bold; font-size:16px; text-align: center; margin-bottom: 10px;">
+                                @item.Titulo
+                            </div>
+
+                            <!-- Ícone e Descrição lado a lado -->
+                            <div class="d-flex align-items-center justify-content-center" style="margin-top: 25px;">
+                                <span style="margin-right: 10px;">
+                                    @Html.Raw(item.Image)
+                                </span>
+                                <span>
+                                    @item.Descricao
+                                </span>
+                            </div>
+
+                            <!-- "Acessar" alinhado à direita na parte inferior -->
+                            <span style="text-align: right; width: 100%; margin-top:25px">
+                                <i class="fa fa-sign-in-alt"></i> Acessar
                             </span>
                         </button>
-
-
                     </div>
                 }
-
-            }            
+            }
         </div>
 
-        
+
+
+
+
+
+
+
     </div>
     <div data-id="0" class="modal fade" tabindex="-1" role="dialog" id="modal-redirect-agendamentos">
         <div class="modal-dialog" role="document">
@@ -76,7 +90,7 @@
                 </div>
                 <div class="modal-footer">
                     @*<button type="button" class="btn btn-secondary" >Não</button>
-                    <button type="button" id="btnSim" class="btn btn-eco">Sim</button>*@
+                        <button type="button" id="btnSim" class="btn btn-eco">Sim</button>*@
                 </div>
             </div>
         </div>
@@ -95,50 +109,46 @@
         </style>
     }
     @section scripts{
-        @Scripts.Render("~/bundles/JGallery")       
-        
-        <script>            
-            $('.link').click(function () {                
-                var link = $(this).attr('data-link');
-                var descricao = $(this).attr('data-descr'); 
-                
-                
-                $.ajax({
-                    url: '@Url.Content("/Home/GetOpenAgendamento")', 
-                    type: 'GET',
-                    data: { link: link, descricao: descricao }, 
+        @Scripts.Render("~/bundles/JGallery")
 
-                    beforeSend: function () {
-                        $('#prealoader').show(); 
-                    },
-                    success: function (Dados) {
-                        $('#preloader').hide();
-                        var mensagem = Dados.Mensagem;
-                        var statusRetorno = Dados.statusRetorno; 
-                        var url = Dados.objetoRetorno.url; 
+        <script>
 
-                    //    $('#modal-redirect-agendamentos').modal('toggle'); 
+            $('.link').click(function (e) {
+    // Verifica se o elemento clicado é o botão ou um dos seus filhos
+    if ($(e.target).closest('button').length > 0) {
+        var link = $(this).attr('data-link');
+        var descricao = $(this).attr('data-descr');
 
-                        if (statusRetorno == "200") {
-                            $('#messageRedirect').empty();
-                            $('#messageRedirect').html(mensagem);                            
-                         
-                            setTimeout(function () {
-                                window.open(url, '_blank');
-                            }, 20)
-                            $('#modal-redirect-agendamentos').modal('hide');
-                         
-                        }
-                        else {
-                            toastr.error(mensagem, 'Agendamentos'); 
-                        }
-                    
-                    }
-                     
-                })
-        
-            });
+        $.ajax({
+            url: '@Url.Content("/Home/GetOpenAgendamento")',
+            type: 'GET',
+            data: { link: link, descricao: descricao },
+
+            beforeSend: function () {
+                $('#prealoader').show();
+            },
+            success: function (Dados) {
+                $('#preloader').hide();
+                var mensagem = Dados.Mensagem;
+                var statusRetorno = Dados.statusRetorno;
+                var url = Dados.objetoRetorno.url;
+
+                if (statusRetorno == "200") {
+                    $('#messageRedirect').empty();
+                    $('#messageRedirect').html(mensagem);
+
+                    setTimeout(function () {
+                        window.open(url, '_blank');
+                    }, 20)
+                    $('#modal-redirect-agendamentos').modal('hide');
+                } else {
+                    toastr.error(mensagem, 'Agendamentos');
+                }
+            }
+        });
+    }
+});
+
         </script>
     }
-    
-       
+

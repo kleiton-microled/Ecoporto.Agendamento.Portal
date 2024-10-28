@@ -32,7 +32,7 @@ namespace Ecoporto.Agendamento.Portal.Controllers
         [HttpGet]
         public ActionResult Index()
         {
-
+            ViewBag.MainClass = "container-fluid top-content";
             var idTranportadora = _veiculoAppServices.ObterIdTransportadora(User.ObterCNPJTransportadora());
             var resultado = _veiculoAppServices.ObterVeiculos(idTranportadora).ToList();
             var veiculos = new Veiculo();

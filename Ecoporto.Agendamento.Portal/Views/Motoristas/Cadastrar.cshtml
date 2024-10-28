@@ -33,6 +33,7 @@
 
         @using (Ajax.BeginForm("Cadastrar", "Motoristas", null, new AjaxOptions
         {
+            OnBegin = "validarCamposObrigatorios",
             OnSuccess = "mensagemSucesso",
             OnFailure = "mensagemErro",
             HttpMethod = "POST"
@@ -139,9 +140,9 @@
                             @Html.LabelFor(model => model.RG, new { @class = "label-required" })
                             @Html.EditorFor(model => model.RG, new { htmlAttributes = new { @class = "form-control", maxlength = "15", @readonly = "readonly" } })
                         </div>
-                        <div class="col-md-2" id="Orgao_Emissor">
+                        <div class="col-md-2">
                             @Html.LabelFor(model => model.Orgao_Emissor, new { @class = "label-required" })
-                            @Html.EditorFor(model => model.Orgao_Emissor, new { htmlAttributes = new { @class = "form-control", @id = "Orgao_Emissor" } })
+                            @Html.EditorFor(model => model.Orgao_Emissor, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                             <div id="orgaoEmissorError" class="text-danger"></div>
                         </div>
 
@@ -154,16 +155,16 @@
                     <div class="row">
 
                         <div class="col-sm-3" id="passaport">
-                            @Html.LabelFor(model => model.Passaport)
+                            @Html.LabelFor(model => model.Passaport, new { @class = "label-required" })
                             @Html.EditorFor(model => model.Passaport, new { htmlAttributes = new { @class = "form-control" } })
                         </div>
                         <div class="col-sm-3" id="Dt_Passaport">
-                            @Html.LabelFor(model => model.Dt_passaport)
+                            @Html.LabelFor(model => model.Dt_passaport, new { @class = "label-required" })
                             @Html.EditorFor(model => model.Dt_passaport, new { htmlAttributes = new { @class = "form-control" } })
                         </div>
 
                         <div class="col-sm-3" id="paises">
-                            @Html.LabelFor(model => model.Bigrama)
+                            @Html.LabelFor(model => model.Bigrama, new { @class = "label-required" })
                             @Html.DropDownListFor(model => model.Bigrama, new MultiSelectList(Model.Paises, "bigrama", "descr"), string.Empty, new { @class = "form-control" })
                         </div>
                     </div>
@@ -177,10 +178,10 @@
                             @Html.LabelFor(model => model.Celular)
                             @Html.EditorFor(model => model.Celular, new { htmlAttributes = new { @class = "form-control celular", maxlength = "15", @readonly = "readonly" } })
                         </div>
-                        <div class="form-group col-md-2">
+                        @*<div class="form-group col-md-2">
                             @Html.LabelFor(model => model.Nextel)
                             @Html.EditorFor(model => model.Nextel, new { htmlAttributes = new { @class = "form-control", maxlength = "20", @readonly = "readonly" } })
-                        </div>
+                        </div>*@
                         <div class="form-group col-md-2">
                             @Html.LabelFor(model => model.MOP)
                             @Html.EditorFor(model => model.MOP, new { htmlAttributes = new { @class = "form-control", maxlength = "15", @readonly = "readonly" } })
@@ -231,7 +232,7 @@
 
     <script>
         $(document).ready(function () {
-
+            
             // Calcula a data de hoje
             var hoje = new Date();
 
@@ -327,43 +328,6 @@
         $("#paises").hide();
 
         //
-        $('#btnSalvarMotorista').click(function () {
-
-            $(this)
-                .html('<i class="fa fa-spinner fa-spin"></i> aguarde...')
-                .addClass('disabled');
-
-            $('#msgErro')
-                .html('').addClass('invisivel');
-        });
-
-        var mensagemSucesso = function (xhr, status) {
-
-            $('#msgErro')
-                .html('').addClass('invisivel');
-
-            $('#pnlMotoristaChronos').addClass('invisivel');
-
-            $('#msgSucesso')
-                .removeClass('invisivel');
-
-            $('#btnSalvarMotorista')
-                .html('Salvar')
-                .removeClass('disabled');
-        };
-
-        var mensagemErro = function (xhr, status) {
-
-            $('#msgSucesso')
-                .addClass('invisivel');
-
-            $('#btnSalvarMotorista')
-                .html('Salvar')
-                .removeClass('disabled');
-
-            mostrarErrosResponse(xhr);
-        };
-
         function mostrarErrosResponse(data) {
 
             var retorno = data.responseJSON;
@@ -408,63 +372,83 @@
 
         });
 
-        $('#chkestrangeiro').click(function () {
+        
 
-            if ($("#chkestrangeiro").is(':checked')) {
+        function validarCamposObrigatorios() {
+            var isEstrangeiro = $('#chkestrangeiro').is(':checked');
 
-                $("#cnh").hide();
-                $("#rg").hide();
-                $("#carteirahabilitacao").show();
-                $("#cpf").hide();
-                $("#paises").show();
-                $('#passaport').show();
-                $("#Dt_Passaport").show();
-                $("#orgao").hide();
-                $("#Chkestrageiro").val(true);
-                $('#Celular').prop('readonly', false);
-                $('#Nextel').prop('readonly', false);
-                $('#MOP').prop('readonly', false);
-                $('#ValidadeCNH').prop('readonly', false);
-                $('#DT_Nascimento').prop('readonly', false);
-                $('#Orgao_Emissor').prop('readonly', false);
-                $('#Data_Emissao').empty().prop('readonly', false);
-                $('#Nome').empty().prop('readonly', false);
+            // Define os campos obrigatórios com base no estado do checkbox
+            var camposObrigatorios = isEstrangeiro
+                ? [
+                    { id: '#Nome', mensagem: 'Nome é obrigatório' },
+                    { id: '#Passaport', mensagem: 'Passaporte é obrigatório' },
+                    { id: '#Dt_passaport', mensagem: 'Data do Passaporte é obrigatória' },
+                    { id: '#DT_Nascimento', mensagem: 'Data de Nascimento é obrigatória' },
+                    { id: '#ValidadeCNH', mensagem: 'Validade da CNH é obrigatória' },
+                    { id: '#Bigrama', mensagem: 'País emissor é obrigatório' },
+                    { id: '#Carteira_Habilitacao', mensagem: 'Carteira de Habilitação é obrigatória' }
+                ]
+                : [
+                    { id: '#Nome', mensagem: 'Nome é obrigatório' },
+                    { id: '#CNH', mensagem: 'CNH é obrigatória' },
+                    { id: '#DT_Nascimento', mensagem: 'Data de Nascimento é obrigatória' },
+                    { id: '#Data_Emissao', mensagem: 'Data de Emissão é obrigatória' },
+                    { id: '#ValidadeCNH', mensagem: 'Validade da CNH é obrigatória' },
+                    { id: '#RG', mensagem: 'RG é obrigatório' },
+                    { id: '#Orgao_Emissor', mensagem: 'Orgão Emissor é obrigatório' },
+                    { id: '#CPF', mensagem: 'CPF é obrigatório' }
+                ];
 
-            } else {
-                $("#cnh").show();
-                $("#rg").show();
-                $("#cpf").show();
-                $("#paises").hide();
-                $('#passaport').hide();
-                $("#carteirahabilitacao").hide();
-                $("#Dt_Passaport").hide();
-                $("#orgao").show();
-                $("#Chkestrageiro").val(false);
-                $('#Celular').prop('readonly', true);
-                $('#Nextel').prop('readonly', true);
-                $('#MOP').prop('readonly', true);
-                $('#ValidadeCNH').prop('readonly', true);
-                $('#DT_Nascimento').prop('readonly', true);
-                $('#Orgao_Emissor').prop('readonly', true);
-                $('#Data_Emissao').empty().prop('readonly', true);
-                $('#Nome').empty().prop('readonly', false);
+            //if (validarGenero()) {
+            //    $('#msgErro').removeClass('invisivel').html(camposVazios[0].mensagem);
+            //    $(camposVazios[0].id).focus(); // Coloca o foco no primeiro campo vazio
+            //    $('#btnSalvarMotorista')
+            //        .html('Salvar')
+            //        .removeClass('disabled');
+            //    return false; // Impede o envio do formulário
+            //};
+
+            var camposVazios = camposObrigatorios.filter(function (campo) {
+                return !$(campo.id).val().trim(); // Verifica se o campo está vazio
+            });
+
+            if (camposVazios.length > 0) {
+                // Exibe uma mensagem para o primeiro campo obrigatório que estiver vazio
+                $('#msgErro').removeClass('invisivel').html(camposVazios[0].mensagem);
+                $(camposVazios[0].id).focus(); // Coloca o foco no primeiro campo vazio
+                $('#btnSalvarMotorista')
+                    .html('Salvar')
+                    .removeClass('disabled');
+                return false; // Impede o envio do formulário
             }
 
-        });
+            $('#msgErro').addClass('invisivel').html(''); // Limpa a mensagem de erro se todos os campos estiverem preenchidos
+            return true; // Permite o envio do formulário
+        }
 
-        // Sucesso ao salvar
-        var mensagemSucesso = function (xhr, status) {
-            $('#msgErro').html('').addClass('invisivel');
-            $('#msgSucesso').removeClass('invisivel').html('Cadastro realizado com sucesso!');
-            $('#btnSalvarMotorista').html('Salvar').removeClass('disabled');
-            limparFormulario();  // Limpa o formulário após a mensagem de sucesso
+        function validarGenero() {
+            // Verifica se pelo menos um dos campos F ou M está marcado
+            const generoF = $('#F').is(':checked');
+            const generoM = $('#M').is(':checked');
+
+            if (!generoF && !generoM) {
+                // Exibe uma mensagem de erro se nenhum campo estiver marcado
+                $('#generoError').removeClass('invisivel').html("Por favor, selecione o gênero (F ou M).");
+                return false;
+            } else {
+                // Remove a mensagem de erro se um dos campos estiver marcado
+                $('#generoError').addClass('invisivel').html('');
+                return true;
+            }
+        }
+
+        var mensagemErro = function (xhr, status) {
+            var errorMessage = xhr.responseJSON?.mensagem || 'Ocorreu um erro ao processar a solicitação.';
+            $('#msgErro').removeClass('invisivel').html(errorMessage);
+
+            $('#btnSalvarMotorista')
+                .html('Salvar')
+                .removeClass('disabled');
         };
-
-        // Evento de clique no botão de salvar
-        $('#btnSalvarMotorista').click(function () {
-            $(this).html('<i class="fa fa-spinner fa-spin"></i> aguarde...').addClass('disabled');
-            $('#msgErro').html('').addClass('invisivel');
-        });
-
     </script>
 }

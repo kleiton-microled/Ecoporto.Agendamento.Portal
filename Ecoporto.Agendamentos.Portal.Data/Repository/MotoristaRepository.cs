@@ -12,15 +12,15 @@ using System.Data;
 
 namespace Ecoporto.Agendamento.Portal.Data.Repository
 {
- public   class MotoristaRepository : UteisRepository, IMotoristaRepository
+    public class MotoristaRepository : UteisRepository, IMotoristaRepository
     {
         public int Cadastrar(Motorista motorista)
         {
             try
             {
-               using (_db = new OracleConnection(Conexao))
+                using (_db = new OracleConnection(Conexao))
                 {
-                   _db.Open();
+                    _db.Open();
 
                     var parametros = new DynamicParameters();
 
@@ -46,7 +46,7 @@ namespace Ecoporto.Agendamento.Portal.Data.Repository
                     //-----------------------------------------------------------------------------------------
                     parametros.Add(name: "Id", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
-                   _db.Execute(@"
+                    _db.Execute(@"
                         INSERT INTO OPERADOR.TB_AG_MOTORISTAS
                             ( 
                                 AUTONUM,
@@ -81,9 +81,7 @@ namespace Ecoporto.Agendamento.Portal.Data.Repository
                                 :DTEMISSAO,1
                             ) RETURNING AUTONUM INTO :Id", parametros);
 
-                   _db.Close();
-                   _db.Dispose();
-
+                   
                     return parametros.Get<int>("Id");
                 }
             }
@@ -97,9 +95,9 @@ namespace Ecoporto.Agendamento.Portal.Data.Repository
         {
             try
             {
-               using (_db = new OracleConnection(Conexao))
+                using (_db = new OracleConnection(Conexao))
                 {
-             
+
                     StringBuilder sb = new StringBuilder();
 
                     sb.Clear();
@@ -114,17 +112,17 @@ namespace Ecoporto.Agendamento.Portal.Data.Repository
                     sb.AppendLine("     CELULAR = '" + motorista.Celular + "',");
                     sb.AppendLine("     NEXTEL = '" + motorista.Nextel + "',");
                     sb.AppendLine("     NUMERO_MOP = '" + motorista.MOP + "',");
-                    sb.AppendLine("     dt_nascimento = '" + motorista.DT_NASCIMENTO + "',");
+                    sb.AppendLine("     dt_nascimento = '" + motorista.DT_NASCIMENTO.ToString("dd/MM/yyyy") + "',");
                     sb.AppendLine("    orgao_emissor  = '" + motorista.Orgao_Emissor + "',");
-                    sb.AppendLine("     DATA_EMISSAO = '" + motorista.Data_Emissao + "',");
-                   
+                    sb.AppendLine("     DATA_EMISSAO = '" + motorista.Data_Emissao.ToString("dd/MM/yyyy") + "',");
+
                     sb.AppendLine("           DT_ULTIMA_ATUALIZACAO = SYSDATE");
                     sb.AppendLine("       WHERE ");
                     sb.AppendLine("           AUTONUM = " + motorista.Id + "");
 
-                    var query =_db.Query(sb.ToString()).FirstOrDefault();
+                    var query = _db.Query(sb.ToString()).FirstOrDefault();
                 }
-                
+
             }
             catch (Exception ex)
             {
@@ -136,17 +134,16 @@ namespace Ecoporto.Agendamento.Portal.Data.Repository
         {
             try
             {
-               using (_db = new OracleConnection(Conexao))
+                using (_db = new OracleConnection(Conexao))
                 {
-                   _db.Open();
+                    _db.Open();
 
                     var parametros = new DynamicParameters();
                     parametros.Add(name: "Id", value: id, direction: ParameterDirection.Input);
 
                     //_db.Execute(@"DELETE FROM OPERADOR.TB_AG_MOTORISTAS WHERE AUTONUM = :Id", parametros);
                     _db.Execute(@"update  OPERADOR.TB_AG_MOTORISTAS set flag_ativo = 0 WHERE AUTONUM = :Id", parametros);
-                    _db.Close();
-                   _db.Dispose();
+                   
                 }
             }
             catch (Exception ex)
@@ -160,14 +157,14 @@ namespace Ecoporto.Agendamento.Portal.Data.Repository
         {
             try
             {
-               using (_db = new OracleConnection(Conexao))
+                using (_db = new OracleConnection(Conexao))
                 {
-                   _db.Open();
+                    _db.Open();
 
                     var parametros = new DynamicParameters();
                     parametros.Add(name: "TransportadoraId", value: transportadoraId, direction: ParameterDirection.Input);
 
-                    var query =_db.Query<Motorista>(@"
+                    var query = _db.Query<Motorista>(@"
                   SELECT
                        DISTINCT
                         AUTONUM As Id,
@@ -191,9 +188,6 @@ namespace Ecoporto.Agendamento.Portal.Data.Repository
                     ORDER BY
                              nome ", parametros);
 
-                   _db.Close();
-                   _db.Dispose();
-
                     return query;
                 }
             }
@@ -207,14 +201,14 @@ namespace Ecoporto.Agendamento.Portal.Data.Repository
         {
             try
             {
-               using (_db = new OracleConnection(Conexao))
+                using (_db = new OracleConnection(Conexao))
                 {
-                   _db.Open();
+                    _db.Open();
 
                     var parametros = new DynamicParameters();
                     parametros.Add(name: "TransportadoraId", value: transportadoraId, direction: ParameterDirection.Input);
 
-                    var query =_db.Query<Motorista>(@"
+                    var query = _db.Query<Motorista>(@"
                     SELECT
                         Id,    
                         NOME,
@@ -246,9 +240,7 @@ namespace Ecoporto.Agendamento.Portal.Data.Repository
                     ORDER BY
                         NOME", parametros);
 
-                   _db.Close();
-                   _db.Dispose();
-
+                   
                     return query;
                 }
             }
@@ -262,9 +254,9 @@ namespace Ecoporto.Agendamento.Portal.Data.Repository
         {
             try
             {
-               using (_db = new OracleConnection(Conexao))
+                using (_db = new OracleConnection(Conexao))
                 {
-                   _db.Open();
+                    _db.Open();
 
                     var criterioDescricao = "%" + descricao.ToUpper() + "%";
 
@@ -274,7 +266,7 @@ namespace Ecoporto.Agendamento.Portal.Data.Repository
                     parametros.Add(name: "CNH", value: criterioDescricao, direction: ParameterDirection.Input);
                     parametros.Add(name: "TransportadoraId", value: transportadoraId, direction: ParameterDirection.Input);
 
-                    var query =_db.Query<Motorista>(@"
+                    var query = _db.Query<Motorista>(@"
                     SELECT
                         AUTONUM As Id,
                         ID_TRANSPORTADORA As TransportadoraId,
@@ -297,9 +289,6 @@ namespace Ecoporto.Agendamento.Portal.Data.Repository
                     ORDER BY
                         VALIDADE_CNH DESC", parametros);
 
-                   _db.Close();
-                   _db.Dispose();
-
                     return query;
                 }
             }
@@ -313,12 +302,12 @@ namespace Ecoporto.Agendamento.Portal.Data.Repository
         {
             try
             {
-               using (_db = new OracleConnection(Conexao))
+                using (_db = new OracleConnection(Conexao))
                 {
                     var parametros = new DynamicParameters();
                     parametros.Add(name: "Id", value: id, direction: ParameterDirection.Input);
 
-                    var query =_db.Query<Motorista>(@"
+                    var query = _db.Query<Motorista>(@"
                     SELECT
                         A.AUTONUM As Id,
                         A.ID_TRANSPORTADORA As TransportadoraId,
@@ -336,10 +325,9 @@ namespace Ecoporto.Agendamento.Portal.Data.Repository
                         a.passaporte as passaport,
                         a.carteira_habilitacao,
                         a.ORGAO_EMISSOR,
-                         nvl(TO_CHAR( a.DATA_EMISSAO,'dd/MM/yyyy'),'') as Data_Emissao,
                         a.bigrama,
                        
-                        a.estrangeiro,
+                        a.DT_EMISSAO AS Data_Emissao,
                         a.genero,
                         DT_NASCIMENTO,
                         NVL(B.FLAG_INATIVO, 0) As INATIVO
@@ -350,9 +338,6 @@ namespace Ecoporto.Agendamento.Portal.Data.Repository
                         and  replace(REPLACE(REPLACE(A.CNH,'.',''),'-',''),'/','') = REPLACE(REPLACE(REPLACE(B.CNH,'.',''),'-',''),'','')
                     WHERE
                         A.AUTONUM = :Id", parametros).FirstOrDefault();
-
-                   _db.Close();
-                   _db.Dispose();
 
                     return query;
                 }
@@ -367,14 +352,14 @@ namespace Ecoporto.Agendamento.Portal.Data.Repository
         {
             try
             {
-               using (_db = new OracleConnection(Conexao))
+                using (_db = new OracleConnection(Conexao))
                 {
                     var parametros = new DynamicParameters();
 
                     parametros.Add(name: "CNH", value: cnh, direction: ParameterDirection.Input);
                     parametros.Add(name: "TransportadoraId", value: transportadoraId, direction: ParameterDirection.Input);
 
-                    var query =_db.Query<Motorista>(@"
+                    var query = _db.Query<Motorista>(@"
                     SELECT
                         AUTONUM As Id,
                         ID_TRANSPORTADORA As TransportadoraId,
@@ -393,9 +378,6 @@ namespace Ecoporto.Agendamento.Portal.Data.Repository
                     AND
                         ID_TRANSPORTADORA = :TransportadoraId", parametros).FirstOrDefault();
 
-                   _db.Close();
-                   _db.Dispose();
-
                     return query;
                 }
             }
@@ -409,16 +391,16 @@ namespace Ecoporto.Agendamento.Portal.Data.Repository
         {
             try
             {
-               using (_db = new OracleConnection(Conexao))
+                using (_db = new OracleConnection(Conexao))
                 {
-                   _db.Open();
+                    _db.Open();
 
                     var parametros = new DynamicParameters();
 
                     parametros.Add(name: "CPF", value: cpf, direction: ParameterDirection.Input);
                     parametros.Add(name: "TransportadoraId", value: transportadoraId, direction: ParameterDirection.Input);
 
-                    var query =_db.Query<Motorista>(@"
+                    var query = _db.Query<Motorista>(@"
                     SELECT
                         AUTONUM As Id,
                         ID_TRANSPORTADORA As TransportadoraId,
@@ -437,9 +419,6 @@ namespace Ecoporto.Agendamento.Portal.Data.Repository
                     AND
                         ID_TRANSPORTADORA = :TransportadoraId", parametros).FirstOrDefault();
 
-                   _db.Close();
-                   _db.Dispose();
-
                     return query;
                 }
             }
@@ -449,41 +428,73 @@ namespace Ecoporto.Agendamento.Portal.Data.Repository
             }
         }
 
+        //public Motorista ObterMotoristaChronosPorCNH(string cnh)
+        //{
+        //    try
+        //    {
+        //        using (var dbConnection = new OracleConnection(Conexao))
+        //        {
+        //            dbConnection.Open();
+
+        //            var parametros = new DynamicParameters();
+        //            parametros.Add(name: "CNH", value: cnh, direction: ParameterDirection.Input);
+
+        //            var query = @"
+        //                         SELECT        
+        //                             NOME,
+        //                             CNH,
+        //                             VALIDADE_CNH AS ValidadeCNH,
+        //                             RG,
+        //                             CPF,
+        //                             REPLACE(REPLACE(TEL_CELULAR, '(__) _____-____', ''), '(00) 00000-0000', '') AS Celular,
+        //                             DT_ULTIMA_ATUALIZACAO AS UltimaAlteracao
+        //                         FROM
+        //                             OPERADOR.TB_MOTORISTAS
+        //                         WHERE
+        //                             CNH = :CNH";
+
+        //            var result = dbConnection.QueryFirstOrDefault<Motorista>(query, parametros);
+        //            return result;
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
+        //        throw;
+        //    }
+        //}
+
         public Motorista ObterMotoristaChronosPorCNH(string cnh)
         {
             try
             {
-               using (_db = new OracleConnection(Conexao))
+                using (var dbConnection = new OracleConnection(Conexao))
                 {
-                   _db.Open();
+                    dbConnection.Open();
 
                     var parametros = new DynamicParameters();
                     parametros.Add(name: "CNH", value: cnh, direction: ParameterDirection.Input);
 
-                    var query =_db.Query<Motorista>(@"
-                    SELECT        
-                        NOME,
-                        CNH,
-                        VALIDADE_CNH As ValidadeCNH,
-                        RG,
-                        CPF,
-                        REPLACE(REPLACE(TEL_CELULAR,'(__) _____-____',''),'(00) 00000-0000','') As Celular,
-                        DT_ULTIMA_ATUALIZACAO As UltimaAlteracao
-                    FROM
-                        OPERADOR.TB_MOTORISTAS
-                    WHERE
-                        CNH = :CNH", parametros).FirstOrDefault();
+                    var query = @"SELECT
+                                     mt.NOME,
+                                     mt.CNH,
+                                     mt.VALIDADE_CNH AS ValidadeCNH,
+                                     mt.RG,
+                                     mt.CPF,
+                                     mt.CELULAR AS Celular,
+                                     mt.DT_ULTIMA_ATUALIZACAO AS UltimaAlteracao
+                                     --mt.*
+                                 FROM
+                                     OPERADOR.TB_AG_MOTORISTAS mt
+                                 WHERE
+                                     mt.CNH = :CNH";
 
-                   _db.Close();
-                   _db.Dispose();
-
-
-                    return query;
+                    var result = dbConnection.QueryFirstOrDefault<Motorista>(query, parametros);
+                    return result;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
 
@@ -491,19 +502,19 @@ namespace Ecoporto.Agendamento.Portal.Data.Repository
         {
             try
             {
-               using (_db = new OracleConnection(Conexao))
+                using (_db = new OracleConnection(Conexao))
                 {
-                   _db.Open();
+                    _db.Open();
 
                     StringBuilder sb = new StringBuilder();
 
                     sb.Clear();
                     sb.Append("SELECT DESCR, BIGRAMA FROM SGIPA.TB_CAD_PAISES ");
 
-                    var query =_db.Query<Paises>(sb.ToString()).AsEnumerable();
+                    var query = _db.Query<Paises>(sb.ToString()).AsEnumerable();
 
-                   _db.Close();
-                   _db.Dispose();
+                    _db.Close();
+                    _db.Dispose();
 
 
                     return query;
