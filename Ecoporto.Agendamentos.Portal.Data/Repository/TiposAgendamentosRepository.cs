@@ -1,46 +1,43 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Text;
 using Dapper;
-using Oracle.ManagedDataAccess.Client; 
+using Oracle.ManagedDataAccess.Client;
 using Ecoporto.Agendamento.Portal.Domain.Entities;
 using Ecoporto.Agendamento.Portal.Domain.Interfaces.Repository;
 
 namespace Ecoporto.Agendamento.Portal.Data.Repository
 {
-    public class TiposAgendamentosRepository: UteisRepository, ITiposAgendamentosRepository  
+    public class TiposAgendamentosRepository : UteisRepository, ITiposAgendamentosRepository
     {
         public IEnumerable<TiposAgendamentos> GetListarTiposAgendamentos()
         {
+            const string query = @"
+                                 SELECT  
+                                    AUTONUM AS Id,
+                                    TITULO AS Titulo,
+                                    DESCRICAO AS Descricao,
+                                    URL AS Link,
+                                    IMAGEM AS Image
+                                FROM  
+                                    SGIPA.TB_SITES_AGENDAMENTOS
+                                WHERE  
+                                    FLAG_ATIVO = 1";
+                                 
             try
             {
-                using (_db = new OracleConnection(Conexao))
+                using (var _db = new OracleConnection(Conexao))
                 {
-                    StringBuilder sb = new StringBuilder();
-
-                    sb.AppendLine(" SELECT  ");
-                    sb.AppendLine(" AUTONUM AS Id, ");
-                    sb.AppendLine(" DESCRICAO as Descricao, ");
-                    sb.AppendLine(" URL as Link, ");
-                    sb.AppendLine(" IMAGEM as Image ");                    
-                    sb.AppendLine(" FROM  ");
-                    sb.AppendLine(" SGIPA.TB_SITES_AGENDAMENTOS ");
-                    sb.AppendLine(" WHERE  ");
-                    sb.AppendLine(" FLAG_ATIVO = 1 ");
-
-
-                    var query = _db.Query<TiposAgendamentos>(sb.ToString()).AsEnumerable();
-
-                    return query;
+                    _db.Open();
+                    return _db.Query<TiposAgendamentos>(query).AsEnumerable();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                // Lança a exceção sem modificar a stack trace original
+                throw;
             }
         }
+
     }
 }

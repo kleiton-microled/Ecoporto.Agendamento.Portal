@@ -12,7 +12,9 @@ namespace Ecoporto.Agendamento.Portal.Models.ViewModels
         public int Id { get; set; }
 
         public int TransportadoraId { get; set; }
-
+        [Required(ErrorMessage = "O nome é obrigatório.")]
+        [StringLength(50, ErrorMessage = "O nome não pode ter mais que 50 caracteres.")]
+        [MinLength(3, ErrorMessage = "O primeiro nome do motorista não pode ter menos que três caracteres.")]
         public string Nome { get; set; }
 
         public string CNH { get; set; }
@@ -49,11 +51,11 @@ namespace Ecoporto.Agendamento.Portal.Models.ViewModels
         public string Orgao_Emissor { get; set; }
 
         [Display(Name = "Data de Emissão")]
-        public string Data_Emissao { get; set; }
+        public DateTime Data_Emissao { get; set; }
 
    
         [Display(Name = "Data de Nascimento")]
-        public string DT_Nascimento { get; set; }
+        public DateTime DT_Nascimento { get; set; }
 
      
         [Display(Name = "Carteira de Habilitação")]
