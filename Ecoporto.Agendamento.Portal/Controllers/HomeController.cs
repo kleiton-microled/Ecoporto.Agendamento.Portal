@@ -52,7 +52,7 @@ namespace Ecoporto.Agendamento.Portal.Controllers
         [AllowAnonymous]
         public ActionResult Login(int? id)
         {
-            ViewBag.MainClass = "container-fluid top-content";
+
             if (id == null)
                 return Redirect(Config.UrlICC());
 

@@ -36,7 +36,6 @@ namespace Ecoporto.Agendamento.Portal.Controllers
         [HttpGet]
         public ActionResult Index()
         {
-            ViewBag.MainClass = "container-fluid top-content";
             var idTranportadora = _veiculoAppServices.ObterIdTransportadora(User.ObterCNPJTransportadora());
             var resultado = _motoristaAppService
                 .ObterMotoristas(idTranportadora).ToList();
@@ -47,7 +46,6 @@ namespace Ecoporto.Agendamento.Portal.Controllers
         [HttpGet]
         public ActionResult Cadastrar()
         {
-            ViewBag.MainClass = "container-fluid top-content";
             var cadastrar = new MotoristaViewModel();
             cadastrar.Paises = _motoristaAppService.ObterPaises().ToList();
 
@@ -145,7 +143,6 @@ namespace Ecoporto.Agendamento.Portal.Controllers
         [HttpGet]
         public ActionResult Atualizar(int? id)
         {
-            ViewBag.MainClass = "container-fluid top-content";
             if (id == null)
                 return RedirectToAction(nameof(Index));
 
@@ -200,7 +197,6 @@ namespace Ecoporto.Agendamento.Portal.Controllers
         [HttpPost]
         public ActionResult Atualizar([Bind(Include = "Id, Nome, CNH, ValidadeCNH, RG, CPF, Celular, Nextel, MOP,Orgao_emissor,Data_emissao,dt_nascimento,TransportadoraId,carteira_habilitacao,Passaport,Bigrama,chkestrageiro,dt_passaport,M,F")] MotoristaViewModel viewModel, int? id)
         {
-            ViewBag.MainClass = "container-fluid top-content";
             try
             {
                 viewModel.Paises = _motoristaAppService.ObterPaises().ToList();
